@@ -1,13 +1,47 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { store } from "./app/store";
+import { Provider } from "react-redux";
+import { ReactReduxFirebaseProvider } from "react-redux-firebase";
+import { ChakraProvider } from "@chakra-ui/react";
+import { BrowserRouter } from "react-router-dom";
+import { injectStore } from "./features/public-annotator/client";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDpitmnOEaY6YjAOqDmvn0tfEYIyauGjSo",
+  authDomain: "annopedia-8479c.firebaseapp.com",
+  projectId: "annopedia-8479c",
+  storageBucket: "annopedia-8479c.appspot.com",
+  messagingSenderId: "585061864747",
+  appId: "1:585061864747:web:fbe5de56a3fe398953216e",
+};
+firebase.initializeApp(firebaseConfig);
+
+export const rrfProviderProps = {
+  firebase,
+  config: {},
+  dispatch: store.dispatch,
+};
+injectStore(store);
+
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <ReactReduxFirebaseProvider {...rrfProviderProps}>
+        <ChakraProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ChakraProvider>
+      </ReactReduxFirebaseProvider>
+    </Provider>
   </React.StrictMode>
 );
 
