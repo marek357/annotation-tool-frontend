@@ -17,7 +17,9 @@
     "firebase": "^9.17.2",
     "framer-motion": "^10.1.0",
     "react": "^18.2.0",
+    "react-data-table-component": "^7.5.3",
     "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3",
     "react-markdown": "^8.0.5",
     "react-redux": "^8.0.5",
     "react-redux-firebase": "^3.11.0",
@@ -26,6 +28,7 @@
     "react-scripts": "5.0.1",
     "rehype-highlight": "^6.0.0",
     "rehype-sanitize": "^5.0.1",
+    "styled-components": "^5.3.8",
     "web-vitals": "^2.1.0"
   },
   "scripts": {

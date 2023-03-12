@@ -25,7 +25,7 @@ import {
   createPrivateAnnotator,
   resendPrivateAnnotatorInvitation,
   togglePrivateAnnotatorStatus,
-} from "../../features/public-annotator/thunk";
+} from "../../../features/public-annotator/thunk";
 
 export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
   const [loading, setLoading] = useState(true);
@@ -88,15 +88,14 @@ export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
   );
 
   useEffect(() => {
-    if (!loaded)
-      dispatch(getPrivateAnnotators([projectURL])).then(() => {
-        setLoading(false);
-      });
+    dispatch(getPrivateAnnotators([projectURL])).then(() => {
+      setLoading(false);
+    });
   }, [auth]);
 
   if (loading) {
     return (
-      <>
+      <Box w="100%">
         <Stack direction="row">
           <Stack>
             <Text fontSize="3xl">New private annotator</Text>
@@ -128,14 +127,14 @@ export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
             </TableContainer>
           </Stack>
         </Stack>
-      </>
+      </Box>
     );
   }
 
   return (
-    <>
-      <Stack direction="row">
-        <Stack>
+    <Box w="100%">
+      <Stack direction="row" w="100%" spacing={10}>
+        <Stack w="30%" spacing={10}>
           <Text fontSize="3xl">New private annotator</Text>
           <Input
             placeholder="Username"
@@ -153,7 +152,7 @@ export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
             Add private annotator
           </Button>
         </Stack>
-        <Stack>
+        <Stack w="70%">
           <TableContainer>
             <Table variant="simple">
               <TableCaption>Private annotators</TableCaption>
@@ -207,6 +206,14 @@ export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
                             aria-label="Resend Email invitation"
                             icon={<EmailIcon />}
                             disabled={!privateAnnotator.is_active}
+                            onClick={() =>
+                              dispatch(
+                                resendPrivateAnnotatorInvitation([
+                                  projectURL,
+                                  privateAnnotator.token,
+                                ])
+                              )
+                            }
                           />
                         </Tooltip>
                         {privateAnnotator.is_active ? (
@@ -257,6 +264,6 @@ export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
           </TableContainer>
         </Stack>
       </Stack>
-    </>
+    </Box>
   );
 }

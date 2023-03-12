@@ -2,22 +2,22 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 import "./App.css";
-import SignIn from "./pages/Authentication/SignIn";
-import SignUp from "./pages/Authentication/SignUp";
-import BrowseProjects from "./pages/BrowseProjects";
-import CreateProject from "./pages/CreateProject";
-import LandingPage from "./pages/LandingPage";
-import PrivateAnnotatorAnnotate from "./pages/PrivateAnnotator/Annotate";
-import PublicAnnotatorAnnotate from "./pages/Project/Annotate";
-import PrivateAnnotatorCompletedAnnotations from "./pages/PrivateAnnotator/CompletedAnnotations";
-import AnnotatedData from "./pages/Project/AnnotatedData";
-import Categories from "./pages/Project/Categories";
-import Description from "./pages/Project/Description";
-import ExportData from "./pages/Project/ExportData";
-import ProjectHome from "./pages/Project/Home";
-import ImportUnannotated from "./pages/Project/ImportData";
-import UnannotatedData from "./pages/Project/UnannotatedData";
-import ContributorProjects from "./pages/ContributorProjects";
+import SignIn from "./PublicAnnotator/pages/Authentication/SignIn";
+import SignUp from "./PublicAnnotator/pages/Authentication/SignUp";
+import BrowseProjects from "./PublicAnnotator/pages/BrowseProjects";
+import CreateProject from "./PublicAnnotator/pages/CreateProject";
+import LandingPage from "./PublicAnnotator/pages/LandingPage";
+import PrivateAnnotatorAnnotate from "./PrivateAnnotator/pages/Annotate";
+import PublicAnnotatorAnnotate from "./PublicAnnotator/pages/Project/Annotate";
+import PrivateAnnotatorCompletedAnnotations from "./PrivateAnnotator/pages/CompletedAnnotations";
+import AnnotatedData from "./PublicAnnotator/pages/Project/AnnotatedData";
+import Categories from "./PublicAnnotator/pages/Project/Categories";
+import Description from "./PublicAnnotator/pages/Project/Description";
+import ExportData from "./PublicAnnotator/pages/Project/ExportData";
+import ProjectHome from "./PublicAnnotator/pages/Project/Home";
+import ImportUnannotated from "./PublicAnnotator/pages/Project/ImportData";
+import UnannotatedData from "./PublicAnnotator/pages/Project/UnannotatedData";
+import ContributorProjects from "./PublicAnnotator/pages/ContributorProjects";
 
 function App() {
   return (

@@ -12,7 +12,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useFirebase } from "react-redux-firebase";
 import Navbar from "../../../components/NavigationBarComponent";
-
 export default function SignIn() {
   const navigate = useNavigate();
   const firebase = useFirebase();

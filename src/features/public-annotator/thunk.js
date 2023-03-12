@@ -4,8 +4,11 @@ import {
   createPrivateAnnotatorAPI,
   getCommunityProjectsAPI,
   getPrivateAnnotatorsAPI,
+  getProjectEntriesAPI,
   resendPrivateAnnotatorInvitationAPI,
   togglePrivateAnnotatorStatusAPI,
+  uploadUnannotatedFileAPI,
+  getUnannotatedDataAPI,
 } from "./api";
 
 export const getCommunityProjects = createAsyncThunk(
@@ -25,7 +28,12 @@ export const createCommunityProject = createAsyncThunk(
 
 export const getPrivateAnnotators = createAsyncThunk(
   "public-annotator/getPrivateAnnotators",
-  async ([projectURL]) => await getPrivateAnnotatorsAPI([projectURL])
+  async ([projectURL]) => await getPrivateAnnotatorsAPI(projectURL)
+);
+
+export const getProjectEntries = createAsyncThunk(
+  "public-annotator/getProjectEntries",
+  async ([projectURL]) => await getProjectEntriesAPI(projectURL)
 );
 
 export const createPrivateAnnotator = createAsyncThunk(
@@ -52,4 +60,23 @@ export const togglePrivateAnnotatorStatus = createAsyncThunk(
       privateAnnotatorToken,
       annotatorStatus
     )
+);
+
+export const uploadUnannotatedFile = createAsyncThunk(
+  "public-annotator/uploadUnannotatedFile",
+  async ([
+    projectURL,
+    uploadUnannotatedFileRequestFormData,
+    stringUploadUnannotatedFileRequestSearchParameters,
+  ]) =>
+    await uploadUnannotatedFileAPI(
+      projectURL,
+      uploadUnannotatedFileRequestFormData,
+      stringUploadUnannotatedFileRequestSearchParameters
+    )
+);
+
+export const getUnannotatedData = createAsyncThunk(
+  "public-annotator/getUnannotatedData",
+  async ([projectURL]) => await getUnannotatedDataAPI(projectURL)
 );

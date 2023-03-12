@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "react-redux-firebase";
 import MDEditor from "@uiw/react-md-editor";
 import rehypeSanitize from "rehype-sanitize";
-import { createCommunityProject } from "../../features/public-annotator/thunk";
+import { createCommunityProject } from "../../../features/public-annotator/thunk";
 import { useNavigate } from "react-router";
 
 export default function CreateProject() {

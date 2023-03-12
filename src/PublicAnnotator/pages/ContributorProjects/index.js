@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Navbar from "../../components/NavigationBarComponent";
-import { getCommunityProjects } from "../../features/public-annotator/thunk";
+import { getCommunityProjects } from "../../../features/public-annotator/thunk";
 import { Badge, Center, Text } from "@chakra-ui/react";
 import {
   Card,

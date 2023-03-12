@@ -4,13 +4,14 @@ import NavigationBreadcrumbsComponent from "../../../components/NavigationBreadc
 import { Text, Stack, Badge, Tag, Button } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { getCommunityProjects } from "../../../features/public-annotator/thunk";
+import { getCommunityProjects } from "../../../../features/public-annotator/thunk";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 // https://chakra-ui.com/docs/components/tabs
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import ManagePrivateAnnotatorsComponent from "../../../components/ManagePrivateAnnotatorsComponent";
 import PrivateAnnotatorStatisticsComponent from "../../../components/PrivateAnnotatorStatisticsComponent";
+import ProjectHomeComponent from "../../../components/ProjectHomeComponent";
 
 export default function ProjectHome() {
   const [loading, setLoading] = useState(true);
@@ -127,17 +128,18 @@ export default function ProjectHome() {
             {userIsAdmin ? (
               <>
                 <Tab>Manage Private Annotators</Tab>
-                <Tab>Private Annotator Satistics</Tab>
+                <Tab>Private Annotator Statistics</Tab>
               </>
             ) : null}
           </TabList>
           <TabPanels>
             <TabPanel>
-              <Stack w="100%" padding="10">
+              <ProjectHomeComponent projectURL={projectURL} />
+              {/* <Stack w="100%" padding="10">
                 <ReactMarkdown components={ChakraUIRenderer()} skipHtml>
                   {project.description}
                 </ReactMarkdown>
-              </Stack>
+              </Stack> */}
             </TabPanel>
             <TabPanel>
               {project.talk_markdown.length > 0 ? (

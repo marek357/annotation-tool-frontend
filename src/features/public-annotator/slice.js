@@ -5,6 +5,8 @@ import {
   getPrivateAnnotators,
   createPrivateAnnotator,
   togglePrivateAnnotatorStatus,
+  getProjectEntries,
+  getUnannotatedData,
 } from "./thunk";
 
 export const initialState = {
@@ -69,6 +71,16 @@ export const publicAnnotatorSlice = createSlice({
       })
       .addCase(togglePrivateAnnotatorStatus.fulfilled, (state, action) => {
         // var index = state.privateAnnotators.indexOf()
+      })
+      .addCase(getProjectEntries.fulfilled, (state, action) => {
+        state.annotated = action.payload;
+      })
+      .addCase(getUnannotatedData.fulfilled, (state, action) => {
+        console.log("unannotated data!");
+        state.unannotated = action.payload;
+      })
+      .addCase(getUnannotatedData.rejected, (state, action) => {
+        console.log(action.error.message);
       });
   },
 });

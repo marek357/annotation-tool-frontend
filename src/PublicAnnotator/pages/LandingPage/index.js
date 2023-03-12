@@ -12,7 +12,7 @@ import {
   SkeletonText,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCommunityProjects } from "../../features/public-annotator/thunk";
+import { getCommunityProjects } from "../../../features/public-annotator/thunk";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import { useNavigate } from "react-router";
@@ -38,6 +38,7 @@ export default function LandingPage() {
       <Stack direction="row" paddingTop="5" paddingBottom="5">
         {projects.map((project) => {
           return (
+            // https://chakra-ui.com/docs/components/card
             <Card w="33%">
               <CardBody>
                 <Badge colorScheme="green">{project.type}</Badge>

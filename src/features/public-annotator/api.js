@@ -50,13 +50,16 @@ export const createPrivateAnnotatorAPI = async (
 export const getPrivateAnnotatorsAPI = async (projectURL) =>
   (await client.get(`/annotate/projects/${projectURL}/annotators`)).data;
 
+export const getProjectEntriesAPI = async (projectURL) =>
+  (await client.get(`/management/projects/${projectURL}/entries`)).data;
+
 export const resendPrivateAnnotatorInvitationAPI = async (
   projectURL,
   privateAnnotatorToken
 ) =>
   (
     await client.get(
-      `/annotate/projects/${projectURL}/resend-invite-email?token=${privateAnnotatorToken}`
+      `/annotate/projects/${projectURL}/resend-invite-email?private_annotator_token=${privateAnnotatorToken}`
     )
   ).data;
 
@@ -70,3 +73,18 @@ export const togglePrivateAnnotatorStatusAPI = async (
       `/annotate/projects/${projectURL}/${privateAnnotatorToken}/toggle-annotator-status?annotator_status=${annotatorStatus}`
     )
   ).data;
+
+export const uploadUnannotatedFileAPI = async (
+  projectURL,
+  uploadUnannotatedFileRequestFormData,
+  stringUploadUnannotatedFileRequestSearchParameters
+) =>
+  (
+    await client.post(
+      `/management/projects/${projectURL}/import?${stringUploadUnannotatedFileRequestSearchParameters}`,
+      uploadUnannotatedFileRequestFormData
+    )
+  ).data;
+
+export const getUnannotatedDataAPI = async (projectURL) =>
+  (await client.get(`/management/projects/${projectURL}/import`)).data;
