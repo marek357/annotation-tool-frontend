@@ -19,12 +19,39 @@ export default function ExportDataComponent({ projectURL }) {
   const jsonPreview = () => (
     <>
       {/* https://www.w3schools.com/jsref/jsref_slice_array.asp */}
-      {entries.slice(0, 3).map((entry) => (
+      {entries.slice(0, 2).map((entry) => (
         <>
           {"{"}
-          {"}"}
+          <br />
+          <Box marginLeft="5">
+            {'    "id": "'}
+            {entry}
+            {'",'}
+            <br />
+            {'    "text": "'}
+            {entry}
+            {'",'}
+            <br />
+            {'    "value": "'}
+            {entry}
+            {'",'}
+            {'    "value": "value1",'}
+            <br />
+          </Box>
+          {"},"}
         </>
       ))}
+      {"{"}
+      <br />
+      <Box marginLeft="5">
+        {'    "id": "1",'}
+        <br />
+        {'    "text": "text1",'}
+        <br />
+        {'    "value": "value1",'}
+        <br />
+      </Box>
+      {"}"}
     </>
   );
 
@@ -51,7 +78,7 @@ export default function ExportDataComponent({ projectURL }) {
         <br />
         {'    "text": "text1",'}
         <br />
-        {'    "value": "value1",'}
+        {'    "value": "value1"'}
         <br />
       </Box>
       {"},"}
@@ -63,7 +90,7 @@ export default function ExportDataComponent({ projectURL }) {
         <br />
         {'    "text": "text2",'}
         <br />
-        {'    "value": "value2",'}
+        {'    "value": "value2"'}
         <br />
       </Box>
       {"},"}
@@ -75,7 +102,7 @@ export default function ExportDataComponent({ projectURL }) {
         <br />
         {'    "text": "text3",'}
         <br />
-        {'    "value": "value3",'}
+        {'    "value": "value3"'}
       </Box>
       {"}"}
     </>
@@ -118,7 +145,8 @@ export default function ExportDataComponent({ projectURL }) {
                 {"["}
                 <br />
                 <Box marginLeft="5">
-                  {entries.length >= 3 ? jsonPreview() : jsonMockPreview()}
+                  {/* {entries.length >= 3 ? jsonPreview() : jsonMockPreview()} */}
+                  {jsonMockPreview()}
                 </Box>
                 {"]"}
               </Code>
@@ -148,7 +176,8 @@ export default function ExportDataComponent({ projectURL }) {
               >
                 <br />
                 <Box marginLeft="5">
-                  {entries.length >= 3 ? csvPreview() : csvMockPreview()}
+                  {/* {entries.length >= 3 ? csvPreview() : csvMockPreview()} */}
+                  {csvMockPreview()}
                 </Box>
               </Code>
             </Center>

@@ -18,7 +18,6 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import MachineTranslationAnnotationComponent from "../../../shared/components/MachineTranslationAnnotationComponent";
 import MachineTranslationAnnotation from "../../components/MachineTranslationAnnotation";
 
 export default function Annotate() {
@@ -29,6 +28,8 @@ export default function Annotate() {
   const privateAnnotator = useSelector(
     (state) => state.privateAnnotator.privateAnnotator
   );
+  const loaded = useSelector((state) => state.privateAnnotator.loaded);
+
   const dispatch = useDispatch();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -51,17 +52,26 @@ export default function Annotate() {
   };
 
   useEffect(() => {
-    dispatch(getPrivateAnnotatorDetails([token])).then(() =>
-      dispatch(getPrivateAnnotatorUnannotated([token])).then(() =>
-        dispatch(getPrivateAnnotatorAnnotated([token])).then(() =>
-          setLoading(false)
+    if (!loaded) {
+      dispatch(getPrivateAnnotatorDetails([token])).then(() =>
+        dispatch(getPrivateAnnotatorUnannotated([token])).then(() =>
+          dispatch(getPrivateAnnotatorAnnotated([token])).then(() =>
+            setLoading(false)
+          )
         )
-      )
-    );
+      );
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   if (loading) {
-    return <Stack>{loadingCard()}</Stack>;
+    return (
+      <>
+        <Navbar token={token} />
+        <Stack>{loadingCard()}</Stack>
+      </>
+    );
   }
 
   if (privateAnnotatorError !== "") {
@@ -93,7 +103,7 @@ export default function Annotate() {
 
   return (
     <>
-      <Navbar privateAnnotator token={token} />
+      <Navbar token={token} />
       {annotationEditor(privateAnnotator.project_type)}
       <Text fontSize="md" fontFamily="Lato" align="center">
         Built for people who care, just like you &#10084;&#65039;

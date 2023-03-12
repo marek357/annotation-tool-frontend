@@ -8,6 +8,7 @@ import {
   SliderTrack,
   Stack,
   Text,
+  SkeletonText,
 } from "@chakra-ui/react";
 import { useState } from "react";
 
@@ -25,7 +26,7 @@ export default function MachineTranslationAnnotationComponent({
   const [adequacy, setAdequacy] = useState(2);
   const [fluency, setFluency] = useState(2);
 
-  if (translationData === undefined) {
+  if (translationData === null) {
     return (
       <Text fontSize="3xl" textAlign="center">
         There are no more texts to be annotated! Good job!
@@ -113,7 +114,7 @@ export default function MachineTranslationAnnotationComponent({
     <>
       <Center textAlign="center" padding={10}>
         <Stack spacing="10" w="70%">
-          <Stack direction="row" justify="space-between">
+          {/* <Stack direction="row" justify="space-between">
             <Button
               isDisabled={index === 0}
               variant="outline"
@@ -130,7 +131,7 @@ export default function MachineTranslationAnnotationComponent({
             >
               Skip for now
             </Button>
-          </Stack>
+          </Stack> */}
 
           {adequacyComplete ? fluencyComponent() : adequacyComponent()}
           <Stack direction="row" justify="space-around">
@@ -150,6 +151,9 @@ export default function MachineTranslationAnnotationComponent({
               onClick={() => {
                 if (adequacyComplete) {
                   submit({ fluency: fluency, adequacy: adequacy });
+                  setFluency(2);
+                  setAdequacy(2);
+                  setAdequacyComplete(false);
                 } else {
                   setAdequacyComplete(true);
                 }

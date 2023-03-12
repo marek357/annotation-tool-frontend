@@ -40,6 +40,7 @@ export const privateAnnotatorSlice = createSlice({
       })
       .addCase(getPrivateAnnotatorAnnotated.fulfilled, (state, action) => {
         state.annotated = action.payload;
+        state.loaded = true;
       })
       .addCase(createPrivateAnnotatorAnnotation.fulfilled, (state, action) => {
         state.unannotated = state.unannotated.filter(

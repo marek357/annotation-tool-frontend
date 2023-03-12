@@ -68,7 +68,20 @@ export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
         privateAnnotatorEmail,
         privateAnnotatorUsername,
       ])
-    ).then(() => {
+    ).then((response) => {
+      console.log(response);
+
+      if (
+        response.type === "public-annotator/createPrivateAnnotator/rejected"
+      ) {
+        toast({
+          title: response.payload.detail,
+          status: "error",
+          duration: 3500,
+          isClosable: true,
+        });
+        return;
+      }
       toast({
         title: "Private annotator created",
         status: "success",

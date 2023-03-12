@@ -42,7 +42,7 @@ export default function Navbar({ token }) {
               )
             }
           >
-            Edit annotations
+            Completed annotations
           </Button>
         </Stack>
         <Stack direction="row" spacing="5">

@@ -38,12 +38,21 @@ export const getProjectEntries = createAsyncThunk(
 
 export const createPrivateAnnotator = createAsyncThunk(
   "public-annotator/createPrivateAnnotator",
-  async ([projectURL, privateAnnotatorEmail, privateAnnotatorUsername]) =>
-    await createPrivateAnnotatorAPI(
-      projectURL,
-      privateAnnotatorEmail,
-      privateAnnotatorUsername
-    )
+  // https://redux-toolkit.js.org/api/createAsyncThunk
+  async (
+    [projectURL, privateAnnotatorEmail, privateAnnotatorUsername],
+    { rejectWithValue }
+  ) => {
+    try {
+      return await createPrivateAnnotatorAPI(
+        projectURL,
+        privateAnnotatorEmail,
+        privateAnnotatorUsername
+      );
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
 );
 
 export const resendPrivateAnnotatorInvitation = createAsyncThunk(

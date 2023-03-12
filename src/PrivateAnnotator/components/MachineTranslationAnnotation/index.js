@@ -1,35 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MachineTranslationAnnotationComponent from "../../../shared/components/MachineTranslationAnnotationComponent";
-import { useToast } from "@chakra-ui/react";
+import { useToast, Box, SkeletonText } from "@chakra-ui/react";
 import { createPrivateAnnotatorAnnotation } from "../../../features/private-annotator/thunk";
 
 export default function MachineTranslationAnnotation({
   privateAnnotatorToken,
 }) {
-  const [index, setIndex] = useState(0);
+  const [unannotatedId, setUnannotatedId] = useState(null);
+  const [dataToBeAnnotated, setDataToBeAnnotated] = useState(null);
+
   const toast = useToast();
   const dispatch = useDispatch();
   const unannotated = useSelector(
     (state) => state.privateAnnotator.unannotated
   );
 
-  const nextText = () => {
-    if (index + 1 < unannotated.length) setIndex(index + 1);
-  };
-
-  const previousText = () => {
-    if (index > 0) setIndex(index - 1);
-  };
-
-  const getText = () => {
-    // sanity check
-    if (index < unannotated.length)
-      return {
-        referenceTranslation: unannotated[index].text,
-        MTSystemTranslation: unannotated[index].mt_system_translation,
-      };
-  };
+  useEffect(() => {
+    if (unannotated.length === 0) return;
+    setUnannotatedId(unannotated[0].id);
+    setDataToBeAnnotated({
+      referenceTranslation: unannotated[0].text,
+      MTSystemTranslation: unannotated[0].mt_system_translation,
+    });
+  }, [unannotated]);
 
   const submitLogic = (data) => {
     if (data.fluency === undefined || data.adequacy === undefined) {
@@ -44,7 +38,7 @@ export default function MachineTranslationAnnotation({
     dispatch(
       createPrivateAnnotatorAnnotation([
         privateAnnotatorToken,
-        unannotated[index].id,
+        unannotatedId,
         data,
       ])
     );
@@ -52,11 +46,7 @@ export default function MachineTranslationAnnotation({
 
   return (
     <MachineTranslationAnnotationComponent
-      nextText={nextText}
-      previousText={previousText}
-      translationData={getText()}
-      index={index}
-      maxIndex={unannotated.length}
+      translationData={dataToBeAnnotated}
       submit={submitLogic}
     />
   );
