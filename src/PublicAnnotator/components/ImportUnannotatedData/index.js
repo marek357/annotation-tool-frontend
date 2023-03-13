@@ -142,8 +142,8 @@ export default function ImportUnannotatedData({ projectURL, projectType }) {
           <FormControl isRequired>
             <FormLabel>
               {projectType === "Machine Translation"
-                ? "Text Field"
-                : "System Translation Field"}
+                ? "System Translation Field"
+                : "Text Field"}
             </FormLabel>
             <Input onChange={(event) => setTextField(event.target.value)} />
             <FormHelperText>

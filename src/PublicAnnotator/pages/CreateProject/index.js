@@ -69,9 +69,22 @@ export default function CreateProject() {
       });
       return;
     }
-    dispatch(createCommunityProject([name, description, type])).then(() => {
-      navigate(`/project/${createdProjectURL}`);
-    });
+    dispatch(createCommunityProject([name, description, type])).then(
+      (response) => {
+        if (
+          response.type === "public-annotator/createCommunityProject/fulfilled"
+        ) {
+          navigate(`/project/${response.payload.url}`);
+        } else {
+          toast({
+            title: response.error.message,
+            status: "error",
+            duration: 3500,
+            isClosable: true,
+          });
+        }
+      }
+    );
   };
 
   return (

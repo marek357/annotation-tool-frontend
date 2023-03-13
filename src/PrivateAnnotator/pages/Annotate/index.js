@@ -92,7 +92,13 @@ export default function Annotate() {
             >
               {privateAnnotatorError}
             </Text>
-            <Text fontSize="md" fontFamily="Lato" align="center" marginTop="10">
+            <Text
+              fontSize="md"
+              fontFamily="Lato"
+              align="center"
+              marginTop="10"
+              textAlign="center"
+            >
               Built for people who care, just like you &#10084;&#65039;
             </Text>
           </CardBody>

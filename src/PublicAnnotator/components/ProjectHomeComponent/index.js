@@ -20,6 +20,7 @@ import {
   getProjectEntries,
   getUnannotatedData,
 } from "../../../features/public-annotator/thunk";
+import CategoriesDefinitionComponent from "../CategoriesDefinitionComponent";
 import ImportUnannotatedData from "../ImportUnannotatedData";
 import ManageUploadedUnannotatedDataComponent from "../ManageUploadedUnannotatedDataComponent";
 import ExportDataComponent from "../ExportDataComponent";
@@ -154,9 +155,7 @@ export default function ProjectHomeComponent({ projectURL }) {
               <AccordionIcon />
             </AccordionButton>
             <AccordionPanel>
-              <ReactMarkdown components={ChakraUIRenderer()} skipHtml>
-                {project.description}
-              </ReactMarkdown>
+              <CategoriesDefinitionComponent />
             </AccordionPanel>
           </AccordionItem>
         ) : null}

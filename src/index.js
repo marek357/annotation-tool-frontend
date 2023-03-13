@@ -6,7 +6,8 @@ import reportWebVitals from "./reportWebVitals";
 import { store } from "./app/store";
 import { Provider } from "react-redux";
 import { ReactReduxFirebaseProvider } from "react-redux-firebase";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { StepsTheme } from "chakra-ui-steps";
 import { BrowserRouter } from "react-router-dom";
 import { injectStore } from "./features/public-annotator/client";
 import firebase from "firebase/compat/app";
@@ -31,11 +32,17 @@ export const rrfProviderProps = {
 };
 injectStore(store);
 
+const extendedTheme = extendTheme({
+  components: {
+    Steps: StepsTheme,
+  },
+});
+
 root.render(
   <React.StrictMode>
     <Provider store={store}>
       <ReactReduxFirebaseProvider {...rrfProviderProps}>
-        <ChakraProvider>
+        <ChakraProvider theme={extendedTheme}>
           <BrowserRouter>
             <App />
           </BrowserRouter>

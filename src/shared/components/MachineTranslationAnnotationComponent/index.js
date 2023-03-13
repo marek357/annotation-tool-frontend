@@ -11,6 +11,8 @@ import {
   SkeletonText,
 } from "@chakra-ui/react";
 import { useState } from "react";
+// https://www.npmjs.com/package/chakra-ui-steps
+import { Step, Steps, useSteps } from "chakra-ui-steps";
 
 // Based on:
 // https://www.cambridge.org/core/journals/natural-language-engineering/article/can-machine-translation-systems-be-evaluated-by-the-crowd-alone/E29DA2BC8E6B99AA1481CC92FAB58462
@@ -25,6 +27,9 @@ export default function MachineTranslationAnnotationComponent({
   const [adequacyComplete, setAdequacyComplete] = useState(false);
   const [adequacy, setAdequacy] = useState(2);
   const [fluency, setFluency] = useState(2);
+  const { nextStep, reset, activeStep } = useSteps({
+    initialStep: 0,
+  });
 
   if (translationData === null) {
     return (
@@ -36,7 +41,7 @@ export default function MachineTranslationAnnotationComponent({
 
   const adequacyComponent = () => (
     <>
-      <Text fontSize="2xl" fontWeight="bold">
+      <Text fontSize="2xl" fontWeight="bold" textAlign="center">
         The black text adequately expresses the meaning of the gray text
       </Text>
       <Box border="1px" padding="10">
@@ -78,7 +83,7 @@ export default function MachineTranslationAnnotationComponent({
 
   const fluencyComponent = () => (
     <>
-      <Text fontSize="2xl" fontWeight="bold">
+      <Text fontSize="2xl" fontWeight="bold" textAlign="center">
         The text is fluent English
       </Text>
       <Box border="1px" padding="10">
@@ -112,60 +117,71 @@ export default function MachineTranslationAnnotationComponent({
 
   return (
     <>
-      <Center textAlign="center" padding={10}>
-        <Stack spacing="10" w="70%">
-          {/* <Stack direction="row" justify="space-between">
-            <Button
-              isDisabled={index === 0}
-              variant="outline"
-              colorScheme="blue"
-              onClick={previousText}
-            >
-              Go to previous text
-            </Button>
-            <Button
-              variant="outline"
-              colorScheme="blue"
-              onClick={nextText}
-              isDisabled={index === maxIndex - 1}
-            >
-              Skip for now
-            </Button>
-          </Stack> */}
-
-          {adequacyComplete ? fluencyComponent() : adequacyComponent()}
-          <Stack direction="row" justify="space-around">
-            {adequacyComplete ? (
-              <Button
-                onClick={() => {
-                  setFluency(2);
-                  setAdequacy(2);
-                  setAdequacyComplete(false);
-                }}
-                w="100%"
-              >
-                Back
-              </Button>
-            ) : null}
+      <Steps activeStep={activeStep} padding="10">
+        {["Adequacy", "Fluency"].map((label) => (
+          <Step label={label} key={label}>
+            <Center textAlign="center" padding={10}>
+              <Stack spacing="10" w="70%">
+                {adequacyComplete ? fluencyComponent() : adequacyComponent()}
+                <Stack direction="row" justify="space-around">
+                  {adequacyComplete ? (
+                    <Button
+                      onClick={() => {
+                        // setFluency(2);
+                        // setAdequacy(2);
+                        setAdequacyComplete(false);
+                        reset();
+                      }}
+                      w="100%"
+                    >
+                      Back
+                    </Button>
+                  ) : null}
+                  <Button
+                    onClick={() => {
+                      if (adequacyComplete) {
+                        submit({ fluency: fluency, adequacy: adequacy });
+                        setFluency(2);
+                        setAdequacy(2);
+                        setAdequacyComplete(false);
+                        reset();
+                      } else {
+                        nextStep();
+                        setAdequacyComplete(true);
+                      }
+                    }}
+                    w="100%"
+                    textAlign="center"
+                  >
+                    {adequacyComplete ? "Submit" : "Next"}
+                  </Button>
+                </Stack>
+              </Stack>
+            </Center>
+          </Step>
+        ))}
+      </Steps>
+      {/* <Stack w="100%" spacing="10" justify="center">
+        <Stack direction="row" justify="center">
+          <div>{adequacyComponent()}</div>
+        </Stack>
+        <Stack direction="row" justify="center">
+          <div>{fluencyComponent()}</div>
+        </Stack>
+        <Stack direction="row" justify="center" paddingBottom={10}>
+          <div>
             <Button
               onClick={() => {
-                if (adequacyComplete) {
-                  submit({ fluency: fluency, adequacy: adequacy });
-                  setFluency(2);
-                  setAdequacy(2);
-                  setAdequacyComplete(false);
-                } else {
-                  setAdequacyComplete(true);
-                }
+                submit({ fluency: fluency, adequacy: adequacy });
+                setFluency(2);
+                setAdequacy(2);
               }}
-              w="100%"
-              textAlign="center"
             >
-              {adequacyComplete ? "Submit" : "Next"}
+              Submit
             </Button>
-          </Stack>
+          </div>
         </Stack>
-      </Center>
+      </Stack> */}
     </>
   );
 }

@@ -43,9 +43,10 @@ export const privateAnnotatorSlice = createSlice({
         state.loaded = true;
       })
       .addCase(createPrivateAnnotatorAnnotation.fulfilled, (state, action) => {
+        state.annotated = [...state.annotated, action.payload];
         state.unannotated = state.unannotated.filter(
           (unannotatedEntry) =>
-            unannotatedEntry.id !== action.payload.unannotated_source
+            unannotatedEntry.id !== action.payload.unannotated_source.id
         );
       });
   },

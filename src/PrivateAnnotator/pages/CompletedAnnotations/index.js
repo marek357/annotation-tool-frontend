@@ -107,6 +107,17 @@ export default function CompletedAnnotations() {
     );
   }
 
+  if (annotated.length === 0) {
+    return (
+      <>
+        <Navbar token={privateAnnotatorToken} />
+        <Text fontSize="3xl" textAlign="center" fontFamily="Lato">
+          There are no annotations made (yet)!
+        </Text>
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar token={privateAnnotatorToken} />
