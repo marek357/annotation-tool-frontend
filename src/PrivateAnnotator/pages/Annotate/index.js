@@ -19,6 +19,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import MachineTranslationAnnotation from "../../components/MachineTranslationAnnotation";
+import TextClassificationAnnotation from "../../components/TextClassificationAnnotation";
 
 export default function Annotate() {
   const [loading, setLoading] = useState(true);
@@ -45,7 +46,7 @@ export default function Annotate() {
 
   const annotationEditor = (projectType) => {
     if (projectType === "Text Classification") {
-      return <>Text Classification</>;
+      return <TextClassificationAnnotation privateAnnotatorToken={token} />;
     } else if (projectType === "Machine Translation") {
       return <MachineTranslationAnnotation privateAnnotatorToken={token} />;
     }

@@ -88,3 +88,36 @@ export const uploadUnannotatedFileAPI = async (
 
 export const getUnannotatedDataAPI = async (projectURL) =>
   (await client.get(`/management/projects/${projectURL}/import`)).data;
+
+export const getProjectDataAPI = async (projectURL) =>
+  (await client.get(`/management/projects/${projectURL}`)).data;
+
+export const createCategoryAPI = async (
+  projectURL,
+  categoryName,
+  categoryDescription,
+  categoryKeyBinding
+) =>
+  (
+    await client.post(
+      `/management/classification/${projectURL}/category`,
+      JSON.stringify({
+        name: categoryName,
+        description: categoryDescription,
+        key_binding: categoryKeyBinding,
+      }),
+      // https://stackoverflow.com/questions/51379356/axios-post-request-not-working
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  ).data;
+
+export const deleteCategoryAPI = async (projectURL, categoryID) =>
+  (
+    await client.delete(
+      `/management/classification/${projectURL}/category?category_id=${categoryID}`
+    )
+  ).data;

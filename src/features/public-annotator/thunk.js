@@ -9,6 +9,9 @@ import {
   togglePrivateAnnotatorStatusAPI,
   uploadUnannotatedFileAPI,
   getUnannotatedDataAPI,
+  getProjectDataAPI,
+  createCategoryAPI,
+  deleteCategoryAPI,
 } from "./api";
 
 export const getCommunityProjects = createAsyncThunk(
@@ -88,4 +91,41 @@ export const uploadUnannotatedFile = createAsyncThunk(
 export const getUnannotatedData = createAsyncThunk(
   "public-annotator/getUnannotatedData",
   async ([projectURL]) => await getUnannotatedDataAPI(projectURL)
+);
+
+export const getProjectData = createAsyncThunk(
+  "public-annotator/getProjectData",
+  async ([projectURL]) => await getProjectDataAPI(projectURL)
+);
+
+export const createCategory = createAsyncThunk(
+  "public-annotator/createCategory",
+  // https://redux-toolkit.js.org/api/createAsyncThunk
+  async (
+    [projectURL, categoryName, categoryDescription, categoryKeyBinding],
+    { rejectWithValue }
+  ) => {
+    try {
+      return await createCategoryAPI(
+        projectURL,
+        categoryName,
+        categoryDescription,
+        categoryKeyBinding
+      );
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteCategory = createAsyncThunk(
+  "public-annotator/deleteCategory",
+  // https://redux-toolkit.js.org/api/createAsyncThunk
+  async ([projectURL, categoryID], { rejectWithValue }) => {
+    try {
+      return await deleteCategoryAPI(projectURL, categoryID);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
 );

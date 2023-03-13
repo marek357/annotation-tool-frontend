@@ -34,3 +34,10 @@ export const createPrivateAnnotatorAnnotationAPI = async (
       { unannotated_source: unannotatedSource, payload: payload }
     )
   ).data;
+
+export const getPrivateAnnotatorCategoriesAPI = async (privateAnnotatorToken) =>
+  (
+    await client.get(
+      `/annotate/projects/categories?token=${privateAnnotatorToken}`
+    )
+  ).data;

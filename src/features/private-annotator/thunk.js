@@ -4,6 +4,7 @@ import {
   getPrivateAnnotatorUnannotatedAPI,
   getPrivateAnnotatorAnnotatedAPI,
   createPrivateAnnotatorAnnotationAPI,
+  getPrivateAnnotatorCategoriesAPI,
 } from "./api";
 
 export const getPrivateAnnotatorDetails = createAsyncThunk(
@@ -31,4 +32,10 @@ export const createPrivateAnnotatorAnnotation = createAsyncThunk(
       unannotatedSource,
       payload
     )
+);
+
+export const getPrivateAnnotatorCategories = createAsyncThunk(
+  "private-annotator/getPrivateAnnotatorCategories",
+  async ([privateAnnotatorToken]) =>
+    await getPrivateAnnotatorCategoriesAPI(privateAnnotatorToken)
 );

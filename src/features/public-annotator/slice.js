@@ -7,6 +7,9 @@ import {
   togglePrivateAnnotatorStatus,
   getProjectEntries,
   getUnannotatedData,
+  getProjectData,
+  createCategory,
+  deleteCategory,
 } from "./thunk";
 
 export const initialState = {
@@ -16,8 +19,8 @@ export const initialState = {
   privateAnnotatorsLoaded: false,
   annotated: [],
   unannotated: [],
-  unannotatedByPublicAnnotator: [],
   categories: [],
+  unannotatedByPublicAnnotator: [],
   createdProjectCategory: {},
   createdProjectAnnotation: {},
   createdProjectURL: "",
@@ -81,6 +84,18 @@ export const publicAnnotatorSlice = createSlice({
       })
       .addCase(getUnannotatedData.rejected, (state, action) => {
         console.log(action.error.message);
+      })
+      .addCase(getProjectData.fulfilled, (state, action) => {
+        state.communityProject = action.payload;
+        state.categories = action.payload.categories;
+      })
+      .addCase(createCategory.fulfilled, (state, action) => {
+        state.categories = [...state.categories, action.payload];
+      })
+      .addCase(deleteCategory.fulfilled, (state, action) => {
+        state.categories = state.categories.filter(
+          (category) => category.id !== action.payload.category_id
+        );
       });
   },
 });

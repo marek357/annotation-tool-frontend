@@ -4,6 +4,7 @@ import {
   getPrivateAnnotatorAnnotated,
   getPrivateAnnotatorDetails,
   getPrivateAnnotatorUnannotated,
+  getPrivateAnnotatorCategories,
 } from "./thunk";
 
 export const initialState = {
@@ -48,6 +49,9 @@ export const privateAnnotatorSlice = createSlice({
           (unannotatedEntry) =>
             unannotatedEntry.id !== action.payload.unannotated_source.id
         );
+      })
+      .addCase(getPrivateAnnotatorCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
       });
   },
 });

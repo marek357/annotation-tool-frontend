@@ -19,6 +19,7 @@ import ExploreDataComponent from "../ExploreDataComponent";
 import {
   getProjectEntries,
   getUnannotatedData,
+  getProjectData,
 } from "../../../features/public-annotator/thunk";
 import CategoriesDefinitionComponent from "../CategoriesDefinitionComponent";
 import ImportUnannotatedData from "../ImportUnannotatedData";
@@ -45,7 +46,9 @@ export default function ProjectHomeComponent({ projectURL }) {
 
   useEffect(() => {
     dispatch(getProjectEntries([projectURL])).then(() =>
-      dispatch(getUnannotatedData([projectURL]))
+      dispatch(getUnannotatedData([projectURL])).then(() =>
+        dispatch(getProjectData([projectURL]))
+      )
     );
   }, []);
 
