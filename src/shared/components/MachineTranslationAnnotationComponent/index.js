@@ -40,7 +40,7 @@ export default function MachineTranslationAnnotationComponent({
   }
 
   const adequacyComponent = () => (
-    <>
+    <Box w="100%">
       <Text fontSize="2xl" fontWeight="bold" textAlign="center">
         The black text adequately expresses the meaning of the gray text
       </Text>
@@ -49,13 +49,13 @@ export default function MachineTranslationAnnotationComponent({
           <Text
             fontSize="2xl"
             fontWeight="bold"
-            textColor="gray.400"
+            // textColor="gray.400"
             fontFamily="Lato"
           >
-            {translationData.referenceTranslation}
+            <i>Source text:</i> {translationData.referenceTranslation}
           </Text>
           <Text fontSize="2xl" fontWeight="bold" fontFamily="Lato">
-            {translationData.MTSystemTranslation}
+            <i>Target text:</i> {translationData.MTSystemTranslation}
           </Text>
         </Stack>
       </Box>
@@ -78,15 +78,15 @@ export default function MachineTranslationAnnotationComponent({
         </Slider>
         <Text fontFamily="Lato">strongly agree</Text>
       </Stack>
-    </>
+    </Box>
   );
 
   const fluencyComponent = () => (
-    <>
+    <Box w="100%">
       <Text fontSize="2xl" fontWeight="bold" textAlign="center">
-        The text is fluent English
+        The text is fluent language
       </Text>
-      <Box border="1px" padding="10">
+      <Box border="1px" padding="10" w="100%">
         <Stack spacing="5">
           <Text fontSize="2xl" fontWeight="bold" fontFamily="Lato">
             {translationData.MTSystemTranslation}
@@ -112,12 +112,12 @@ export default function MachineTranslationAnnotationComponent({
         </Slider>
         <Text fontFamily="Lato">strongly agree</Text>
       </Stack>
-    </>
+    </Box>
   );
 
   return (
     <>
-      <Steps activeStep={activeStep} padding="10">
+      {/* <Steps activeStep={activeStep} padding="10">
         {["Adequacy", "Fluency"].map((label) => (
           <Step label={label} key={label}>
             <Center textAlign="center" padding={10}>
@@ -160,13 +160,13 @@ export default function MachineTranslationAnnotationComponent({
             </Center>
           </Step>
         ))}
-      </Steps>
-      {/* <Stack w="100%" spacing="10" justify="center">
-        <Stack direction="row" justify="center">
-          <div>{adequacyComponent()}</div>
+      </Steps> */}
+      <Stack w="100%" spacing="10" justify="center">
+        <Stack direction="row" justify="center" w="100%">
+          <div width="100%">{adequacyComponent()}</div>
         </Stack>
-        <Stack direction="row" justify="center">
-          <div>{fluencyComponent()}</div>
+        <Stack direction="row" justify="center" w="100%">
+          <div width="100%">{fluencyComponent()}</div>
         </Stack>
         <Stack direction="row" justify="center" paddingBottom={10}>
           <div>
@@ -181,7 +181,7 @@ export default function MachineTranslationAnnotationComponent({
             </Button>
           </div>
         </Stack>
-      </Stack> */}
+      </Stack>
     </>
   );
 }

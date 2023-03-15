@@ -73,6 +73,12 @@ export default function TextClassificationAnnotationComponent({
       localKeyToCategoryMapping[category.key_binding] = category.name;
     });
     setKeyToCategoryMapping(localKeyToCategoryMapping);
+    if (
+      textClassificationData.preAnnotation !== undefined &&
+      textClassificationData.preAnnotation in localKeyToCategoryMapping
+    ) {
+      setCategory();
+    }
   }, []);
 
   const annotationNavigation = () => (

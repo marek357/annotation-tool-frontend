@@ -45,6 +45,7 @@ export default function Annotate() {
   );
 
   const annotationEditor = (projectType) => {
+    console.log(projectType, "prtype");
     if (projectType === "Text Classification") {
       return <TextClassificationAnnotation privateAnnotatorToken={token} />;
     } else if (projectType === "Machine Translation") {

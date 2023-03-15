@@ -6,7 +6,7 @@ import {
   getUnannotatedData,
 } from "../../../features/public-annotator/thunk";
 
-const columns = [
+const columns = (type) => [
   {
     name: "ID",
     selector: (row) => row.id,
@@ -24,13 +24,19 @@ const columns = [
   },
   {
     name: "Preannotations",
-    selector: (row) => JSON.stringify(row.pre_annotations),
+    selector: (row) =>
+      type === "Text Classification"
+        ? row.pre_annotations["category"]
+        : JSON.stringify(row.pre_annotations),
     sortable: true,
   },
 ];
 
 export default function ManageUploadedUnannotatedDataComponent({ projectURL }) {
   const dispatch = useDispatch();
+  const type = useSelector(
+    (state) => state.publicAnnotator.communityProject.type
+  );
   const data = useSelector((state) => state.publicAnnotator.unannotated);
 
   useEffect(() => {
@@ -41,7 +47,7 @@ export default function ManageUploadedUnannotatedDataComponent({ projectURL }) {
   }, [projectURL]);
   return (
     <>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns(type)} data={data} />
     </>
   );
 }

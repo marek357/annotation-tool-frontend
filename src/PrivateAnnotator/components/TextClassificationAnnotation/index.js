@@ -46,6 +46,7 @@ export default function TextClassificationAnnotation({
       setDataToBeAnnotated({
         text: unannotated[index].text,
         context: unannotated[index].context,
+        preAnnotation: unannotated[index].pre_annotation,
       });
     };
     updateState();
