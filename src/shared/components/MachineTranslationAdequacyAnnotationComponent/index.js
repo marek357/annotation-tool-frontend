@@ -16,11 +16,16 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  Tooltip,
+  RadioGroup,
+  Radio,
+  Input,
+  Textarea,
 } from "@chakra-ui/react";
 import { useState } from "react";
 // https://www.npmjs.com/package/chakra-ui-steps
 import { Step, Steps, useSteps } from "chakra-ui-steps";
-import Highlightable from "highlightable";
+import Highlightable, { Node } from "highlightable";
 
 // Based on:
 // https://www.cambridge.org/core/journals/natural-language-engineering/article/can-machine-translation-systems-be-evaluated-by-the-crowd-alone/E29DA2BC8E6B99AA1481CC92FAB58462
@@ -34,17 +39,12 @@ export default function MachineTranslationAdequacyAnnotationComponent({
 }) {
   const [adequacyComplete, setAdequacyComplete] = useState(false);
   const [adequacy, setAdequacy] = useState(2);
-  const [fluency, setFluency] = useState(2);
-  const { nextStep, reset, activeStep } = useSteps({
-    initialStep: 0,
-  });
-  const [highlightsSource, setHighlightsSource] = useState([]);
-  const [sourcePopoverOpen, setSourcePopoverOpen] = useState("");
 
-  const sourceHighlight = useHighlight({
-    text: translationData === null ? "" : translationData.referenceTranslation,
-    query: highlightsSource,
-  });
+  const [highlightsSource, setHighlightsSource] = useState([]);
+  const [highlightsTarget, setHighlightsTarget] = useState([]);
+  const [targetCategories, setTargetCategories] = useState({});
+
+  const [targetPopoverOpen, setTargetPopoverOpen] = useState(null);
 
   if (translationData === null) {
     return (
@@ -53,6 +53,15 @@ export default function MachineTranslationAdequacyAnnotationComponent({
       </Text>
     );
   }
+
+  // const processedText = (text) => {
+  //   if (highlightsSource.length === 0) return text;
+  //   var beginning = 0;
+  //   var highlightedBeginning = highlightsSource[0].beginning;
+  //   highlightsSource.forEach(element => {
+
+  //   });
+  // };
 
   const adequacyComponent = () => {
     return (
@@ -71,75 +80,53 @@ export default function MachineTranslationAdequacyAnnotationComponent({
               >
                 <i>Source text:</i>
               </Text>
-              {/* https://chakra-ui.com/docs/components/highlight */}
-              <Text
-                fontSize="2xl"
-                fontWeight="bold"
-                fontFamily="Lato"
-                // https://stackoverflow.com/questions/43184603/select-text-highlight-selection-or-get-selection-value-react
-                onMouseUp={() => {
-                  const selection = window.getSelection().toString();
-                  if (selection === "") return;
-                  // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array-in-javascript
-                  const index = highlightsSource.indexOf(selection);
-                  if (index < 0) {
-                    setHighlightsSource([...highlightsSource, selection]);
-                  } else {
-                    setHighlightsSource(highlightsSource.splice(index, 1));
-                  }
+              <Highlightable
+                ranges={highlightsSource}
+                enabled
+                style={{ fontFamily: "Lato", fontSize: "1.5em" }}
+                onTextHighlighted={(e) => {
+                  const modified = highlightsSource.filter(
+                    (element) =>
+                      element.start !== e.start && element.end !== e.end
+                  );
+                  if (modified.length === highlightsSource.length)
+                    setHighlightsSource([...highlightsSource, e]);
+                  else setHighlightsSource(modified);
                 }}
-              >
-                {/* <Highlight
-                  query={highlightsSource}
-                  styles={{ px: "1", py: "1", bg: "orange.100" }}
-                >
-                  {translationData.referenceTranslation}
-                </Highlight> */}
-                <Heading lineHeight="tall">
-                  {sourceHighlight.map(({ match, text }) => {
-                    if (!match) return text;
-                    return text === "instantly" ? (
-                      <Box>{text}</Box>
-                    ) : (
-                      <Popover isOpen={sourcePopoverOpen === text}>
-                        <PopoverTrigger>
-                          <Mark
-                            bg="orange"
-                            // color="white"
-                            // fontFamily="NewYork"
-                            px="2"
-                            py="1"
-                            style={{ cursor: "pointer" }}
-                            onMouseEnter={() => setSourcePopoverOpen(text)}
-                            onMouseLeave={() => setSourcePopoverOpen("")}
-                            onClick={() => {
-                              console.log(
-                                text,
-                                highlightsSource.filter(
-                                  (element) => element !== text
-                                )
-                              );
-                              setHighlightsSource(
-                                highlightsSource.filter(
-                                  (element) => element !== text
-                                )
-                              );
-                            }}
-                          >
-                            {text}
-                          </Mark>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          onMouseEnter={() => setSourcePopoverOpen(text)}
-                          onMouseLeave={() => setSourcePopoverOpen("")}
-                        >
-                          test popover
-                        </PopoverContent>
-                      </Popover>
-                    );
-                  })}
-                </Heading>
-              </Text>
+                rangeRenderer={(
+                  currentRenderedNodes,
+                  currentRenderedRange,
+                  currentRenderedIndex,
+                  onMouseOverHighlightedWord
+                ) => {
+                  return (
+                    <Tooltip hasArrow isOpen placement="top" label="omission">
+                      <Mark
+                        bg="orange.400"
+                        color="white"
+                        borderRightRadius="5px"
+                        borderLeftRadius="5px"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          // setSourcePopoverOpen(currentRenderedRange)
+                          const e = currentRenderedRange;
+                          setHighlightsSource(
+                            highlightsSource.filter(
+                              (element) =>
+                                element.start !== e.start &&
+                                element.end !== e.end
+                            )
+                          );
+                        }}
+                      >
+                        {currentRenderedNodes}
+                      </Mark>
+                    </Tooltip>
+                  );
+                }}
+                id="source-text"
+                text={translationData.referenceTranslation}
+              />
             </Stack>
             <Stack direction="row">
               <Text
@@ -150,7 +137,120 @@ export default function MachineTranslationAdequacyAnnotationComponent({
               >
                 <i>Target text:</i>
               </Text>
-              <Text
+              <Highlightable
+                ranges={highlightsTarget}
+                enabled
+                style={{ fontFamily: "Lato", fontSize: "1.5em" }}
+                onTextHighlighted={(e) => {
+                  const modified = highlightsTarget.filter(
+                    (element) =>
+                      element.start !== e.start && element.end !== e.end
+                  );
+                  console.log(e);
+                  if (modified.length === highlightsTarget.length) {
+                    setHighlightsTarget([...highlightsTarget, e]);
+                    targetCategories[[e.start, e.end]] = "Unspecified Error";
+                    setTargetCategories(targetCategories);
+                    // setTargetCategories({
+                    //   ...targetCategories,
+                    //   e.start.toString(): "Unspecified Error",
+                    // });
+                  } else {
+                    setHighlightsTarget(modified);
+                    // https://stackoverflow.com/questions/346021/how-do-i-remove-objects-from-a-javascript-associative-array
+                    const modifiedCategories = targetCategories;
+                    delete modifiedCategories[e];
+                    setTargetCategories(modifiedCategories);
+                  }
+                }}
+                rangeRenderer={(
+                  currentRenderedNodes,
+                  currentRenderedRange,
+                  currentRenderedIndex,
+                  onMouseOverHighlightedWord
+                ) => {
+                  console.log(targetCategories);
+                  return (
+                    <Popover
+                      isOpen={targetPopoverOpen === currentRenderedRange}
+                      placement="bottom-start"
+                    >
+                      <PopoverTrigger>
+                        <Tooltip
+                          hasArrow
+                          isOpen
+                          placement="bottom"
+                          label={
+                            targetCategories[
+                              [
+                                currentRenderedRange.start,
+                                currentRenderedRange.end,
+                              ]
+                            ]
+                          }
+                        >
+                          <Mark
+                            bg="red.400"
+                            color="white"
+                            borderRightRadius="5px"
+                            borderLeftRadius="5px"
+                            style={{ cursor: "pointer" }}
+                            onMouseEnter={() =>
+                              setTargetPopoverOpen(currentRenderedRange)
+                            }
+                            onMouseLeave={() => setTargetPopoverOpen("")}
+                            onClick={() => {
+                              // setSourcePopoverOpen(currentRenderedRange)
+                              const e = currentRenderedRange;
+                              setHighlightsTarget(
+                                highlightsTarget.filter(
+                                  (element) =>
+                                    element.start !== e.start &&
+                                    element.end !== e.end
+                                )
+                              );
+                              // https://stackoverflow.com/questions/346021/how-do-i-remove-objects-from-a-javascript-associative-array
+                              const modifiedCategories = targetCategories;
+                              delete modifiedCategories[e];
+                              setTargetCategories(modifiedCategories);
+                            }}
+                          >
+                            {currentRenderedNodes}
+                          </Mark>
+                        </Tooltip>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        onMouseEnter={() =>
+                          setTargetPopoverOpen(currentRenderedRange)
+                        }
+                        onMouseLeave={() => setTargetPopoverOpen("")}
+                      >
+                        <RadioGroup
+                          onChange={(event) => {
+                            const modifiedCategories = targetCategories;
+                            modifiedCategories[
+                              [
+                                currentRenderedRange.start,
+                                currentRenderedRange.end,
+                              ]
+                            ] = event;
+                            setTargetCategories(modifiedCategories);
+                          }}
+                        >
+                          <Stack direction="column">
+                            <Radio value="Error 1">Error 1</Radio>
+                            <Radio value="Error 2">Error 2</Radio>
+                            <Radio value="Error 3">Error 3</Radio>
+                          </Stack>
+                        </RadioGroup>
+                      </PopoverContent>
+                    </Popover>
+                  );
+                }}
+                id="source-text"
+                text={translationData.MTSystemTranslation}
+              />
+              {/* <Text
                 fontSize="2xl"
                 fontWeight="bold"
                 // textColor="gray.400"
@@ -159,7 +259,7 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                 onMouseUp={() => console.log(window.getSelection().toString())}
               >
                 {translationData.MTSystemTranslation}
-              </Text>
+              </Text> */}
             </Stack>
           </Stack>
         </Box>
@@ -188,21 +288,32 @@ export default function MachineTranslationAdequacyAnnotationComponent({
 
   return (
     <>
-      <Stack w="100%" spacing="10" justify="center">
-        <Stack direction="row" justify="center" w="100%">
+      <Stack w="100%" spacing="10" justify="center" direction="row">
+        <Stack direction="column" justify="center" w="75%">
+          {/* <Stack> */}
           <div width="100%">{adequacyComponent()}</div>
-        </Stack>
-        <Stack direction="row" justify="center" paddingBottom={10}>
-          <div>
-            <Button
-              onClick={() => {
-                submit({ adequacy: adequacy });
-                setAdequacy(2);
-              }}
-            >
-              Submit
-            </Button>
-          </div>
+          <Box padding="10">
+            <Textarea
+              placeholder="Please write any comments here about the highlighted errors or annotation"
+              w="100%"
+              width="100%"
+              resize="horizontal"
+              size="lg"
+            />
+          </Box>
+          {/* </Stack> */}
+          <Stack direction="row" justify="center" paddingBottom={10}>
+            <div>
+              <Button
+                onClick={() => {
+                  submit({ adequacy: adequacy });
+                  setAdequacy(2);
+                }}
+              >
+                Submit
+              </Button>
+            </div>
+          </Stack>
         </Stack>
       </Stack>
     </>
