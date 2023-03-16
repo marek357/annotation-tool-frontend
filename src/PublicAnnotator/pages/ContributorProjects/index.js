@@ -26,7 +26,7 @@ import rehypeHighlight from "rehype-highlight";
 export default function ContributorProjects() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const communityProjects = useSelector(
     (state) => state.publicAnnotator.communityProjects
@@ -74,7 +74,7 @@ export default function ContributorProjects() {
       );
       setLoading(false);
     }
-  }, [dispatch]);
+  }, [dispatch, auth]);
 
   useEffect(() => {
     setProjects(
@@ -146,7 +146,7 @@ export default function ContributorProjects() {
       <Navbar />
       <Center>
         <Stack w="75%" spacing="10">
-          {loading || projects === undefined || projects.length == 0
+          {loading || projects === undefined
             ? loadingCard()
             : projects.map((project) => projectCard(project))}
           <Text fontSize="md" fontFamily="Lato" align="center">

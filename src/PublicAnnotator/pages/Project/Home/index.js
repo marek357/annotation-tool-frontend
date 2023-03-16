@@ -49,7 +49,7 @@ export default function ProjectHome() {
         });
       }
     }
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     if (projects.length === 0) return;
@@ -72,8 +72,6 @@ export default function ProjectHome() {
       });
     }
   }, [projects]);
-
-  console.log("project", project);
 
   if (
     error404

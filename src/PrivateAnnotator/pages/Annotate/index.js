@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import MachineTranslationAnnotation from "../../components/MachineTranslationAnnotation";
 import TextClassificationAnnotation from "../../components/TextClassificationAnnotation";
+import MachineTranslationAdequacyAnnotation from "../../components/MachineTranslationAdequacyAnnotation";
 
 export default function Annotate() {
   const [loading, setLoading] = useState(true);
@@ -48,8 +49,10 @@ export default function Annotate() {
     console.log(projectType, "prtype");
     if (projectType === "Text Classification") {
       return <TextClassificationAnnotation privateAnnotatorToken={token} />;
-    } else if (projectType === "Machine Translation") {
-      return <MachineTranslationAnnotation privateAnnotatorToken={token} />;
+    } else if (projectType === "Machine Translation Adequacy") {
+      return (
+        <MachineTranslationAdequacyAnnotation privateAnnotatorToken={token} />
+      );
     }
   };
 

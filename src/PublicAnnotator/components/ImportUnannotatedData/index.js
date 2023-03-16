@@ -68,7 +68,10 @@ export default function ImportUnannotatedData({ projectURL, projectType }) {
         isClosable: true,
       });
 
-    if (projectType === "Machine Translation" && machineTranslationField === "")
+    if (
+      projectType === "Machine Translation Adequacy" &&
+      machineTranslationField === ""
+    )
       toast({
         title: "Machine Translation Field missing",
         status: "error",
@@ -78,7 +81,8 @@ export default function ImportUnannotatedData({ projectURL, projectType }) {
     if (
       textField === "" ||
       (acceptedFiles[0].type === "text/csv" && csvDelimiter === "") ||
-      (projectType === "Machine Translation" && machineTranslationField === "")
+      (projectType === "Machine Translation Adequacy" &&
+        machineTranslationField === "")
     )
       return;
 
@@ -141,7 +145,7 @@ export default function ImportUnannotatedData({ projectURL, projectType }) {
           {/* https://chakra-ui.com/docs/components/form-control */}
           <FormControl isRequired>
             <FormLabel>
-              {projectType === "Machine Translation"
+              {projectType === "Machine Translation Adequacy"
                 ? "System Translation Field"
                 : "Text Field"}
             </FormLabel>
@@ -161,7 +165,7 @@ export default function ImportUnannotatedData({ projectURL, projectType }) {
               </FormHelperText>
             </FormControl>
           ) : null}
-          {projectType === "Machine Translation" ? (
+          {projectType === "Machine Translation Adequacy" ? (
             <FormControl isRequired>
               <FormLabel>Reference translation</FormLabel>
               <Input

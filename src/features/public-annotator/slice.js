@@ -45,7 +45,7 @@ export const publicAnnotatorSlice = createSlice({
     builder
       .addCase(getCommunityProjects.fulfilled, (state, action) => {
         state.communityProjects = action.payload;
-        state.loaded = true;
+        // state.loaded = true;
       })
       .addCase(getCommunityProjects.rejected, (state, action) => {
         console.log(action.error.message);

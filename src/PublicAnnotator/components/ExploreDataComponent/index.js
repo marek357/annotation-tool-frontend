@@ -26,34 +26,6 @@ const columns = [
   },
 ];
 
-const columnsMT = [
-  {
-    name: "ID",
-    selector: (row) => row.id,
-    sortable: true,
-  },
-  {
-    name: "Text",
-    selector: (row) => row.text,
-    sortable: true,
-  },
-  {
-    name: "Fluency",
-    selector: (row) => row.payload.fluency,
-    sortable: false,
-  },
-  {
-    name: "Adequacy",
-    selector: (row) => row.payload.adequacy,
-    sortable: false,
-  },
-  {
-    name: "Contributor",
-    selector: (row) => row.annotator,
-    sortable: true,
-  },
-];
-
 export default function ExploreDataComponent({ projectURL, type }) {
   const dispatch = useDispatch();
   var data = useSelector((state) => state.publicAnnotator.annotated).map(
@@ -78,10 +50,7 @@ export default function ExploreDataComponent({ projectURL, type }) {
   }, [projectURL]);
   return (
     <>
-      <DataTable
-        columns={type === "Machine Translation" ? columnsMT : columns}
-        data={data}
-      />
+      <DataTable columns={columns} data={data} />
     </>
   );
 }

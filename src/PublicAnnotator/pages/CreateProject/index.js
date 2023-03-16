@@ -33,7 +33,8 @@ export default function CreateProject() {
   const [type, setType] = useState("Text Classification");
   const modesOfAnnotation = [
     ["Text Classification", false],
-    ["Machine Translation", false],
+    ["Machine Translation Adequacy", false],
+    ["Machine Translation Fluency", false],
     ["Named Entity Recognition", true],
   ];
 
