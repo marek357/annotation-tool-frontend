@@ -43,6 +43,7 @@ export default function MachineTranslationAdequacyAnnotationComponent({
   const [highlightsSource, setHighlightsSource] = useState([]);
   const [highlightsTarget, setHighlightsTarget] = useState([]);
   const [targetCategories, setTargetCategories] = useState({});
+  const [comment, setComment] = useState("");
 
   const [targetPopoverOpen, setTargetPopoverOpen] = useState(null);
 
@@ -149,7 +150,10 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                   console.log(e);
                   if (modified.length === highlightsTarget.length) {
                     setHighlightsTarget([...highlightsTarget, e]);
-                    targetCategories[[e.start, e.end]] = "Unspecified Error";
+                    targetCategories[[e.start, e.end]] = [
+                      [e.start, e.end],
+                      "Unspecified Error",
+                    ];
                     setTargetCategories(targetCategories);
                     // setTargetCategories({
                     //   ...targetCategories,
@@ -186,7 +190,7 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                                 currentRenderedRange.start,
                                 currentRenderedRange.end,
                               ]
-                            ]
+                            ][1]
                           }
                         >
                           <Mark
@@ -233,7 +237,7 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                                 currentRenderedRange.start,
                                 currentRenderedRange.end,
                               ]
-                            ] = event;
+                            ][1] = event;
                             setTargetCategories(modifiedCategories);
                           }}
                         >
@@ -294,11 +298,10 @@ export default function MachineTranslationAdequacyAnnotationComponent({
           <div width="100%">{adequacyComponent()}</div>
           <Box padding="10">
             <Textarea
+              value={comment}
+              onChange={(event) => setComment(event.target.value)}
               placeholder="Please write any comments here about the highlighted errors or annotation"
               w="100%"
-              width="100%"
-              resize="horizontal"
-              size="lg"
             />
           </Box>
           {/* </Stack> */}
@@ -306,8 +309,47 @@ export default function MachineTranslationAdequacyAnnotationComponent({
             <div>
               <Button
                 onClick={() => {
-                  submit({ adequacy: adequacy });
+                  var source_text_highlights = highlightsSource.map((range) => {
+                    const beginning =
+                      range.start > range.end ? range.end : range.start;
+                    const end =
+                      range.start > range.end ? range.start : range.end;
+                    return {
+                      beginning,
+                      end,
+                      category: "omission",
+                    };
+                  });
+                  var target_text_highlights = [];
+                  // https://stackoverflow.com/questions/14810506/map-function-for-objects-instead-of-arrays
+                  Object.keys(targetCategories).forEach((key, index) => {
+                    const element = targetCategories[key];
+                    const beginning =
+                      element[0][0] > element[0][1]
+                        ? element[0][1]
+                        : element[0][0];
+                    const end =
+                      element[0][0] > element[0][1]
+                        ? element[0][0]
+                        : element[0][1];
+                    // https://www.w3schools.com/jsref/jsref_push.asp
+                    target_text_highlights.push({
+                      beginning,
+                      end,
+                      category: element[1],
+                    });
+                  });
+                  submit({
+                    adequacy: adequacy,
+                    annotator_comment: comment,
+                    target_text_highlights,
+                    source_text_highlights,
+                  });
                   setAdequacy(2);
+                  setComment("");
+                  setTargetCategories({});
+                  setHighlightsSource([]);
+                  setHighlightsTarget([]);
                 }}
               >
                 Submit
