@@ -10,6 +10,8 @@ import {
   getProjectData,
   createCategory,
   deleteCategory,
+  getUnannotatedByPublicAnnotatorData,
+  createPublicAnnotatorAnnotation,
 } from "./thunk";
 
 export const initialState = {
@@ -96,6 +98,18 @@ export const publicAnnotatorSlice = createSlice({
         state.categories = state.categories.filter(
           (category) => category.id !== action.payload.category_id
         );
+      })
+      .addCase(
+        getUnannotatedByPublicAnnotatorData.fulfilled,
+        (state, action) => {
+          state.unannotatedByPublicAnnotator = action.payload;
+        }
+      )
+      .addCase(createPublicAnnotatorAnnotation.fulfilled, (state, action) => {
+        state.unannotatedByPublicAnnotator =
+          state.unannotatedByPublicAnnotator.filter(
+            (element) => element.id != action.payload.unannotated_source.id
+          );
       });
   },
 });

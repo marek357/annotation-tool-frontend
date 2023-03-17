@@ -4,7 +4,10 @@ import NavigationBreadcrumbsComponent from "../../../components/NavigationBreadc
 import { Text, Stack, Badge, Tag, Button } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { getCommunityProjects } from "../../../../features/public-annotator/thunk";
+import {
+  getCommunityProjects,
+  patchProjectTalk,
+} from "../../../../features/public-annotator/thunk";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import ChakraUIRenderer from "chakra-ui-markdown-renderer";
 // https://chakra-ui.com/docs/components/tabs
@@ -12,11 +15,14 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import ManagePrivateAnnotatorsComponent from "../../../components/ManagePrivateAnnotatorsComponent";
 import PrivateAnnotatorStatisticsComponent from "../../../components/PrivateAnnotatorStatisticsComponent";
 import ProjectHomeComponent from "../../../components/ProjectHomeComponent";
+import MDEditor from "@uiw/react-md-editor";
 
 export default function ProjectHome() {
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState({});
   const [error404, setError404] = useState(false);
+  const [editTalk, setEditTalk] = useState(false);
+  const [talkValue, setTalkValue] = useState("");
   const navigate = useNavigate();
   const { projectURL } = useParams();
   const dispatch = useDispatch();
@@ -28,7 +34,7 @@ export default function ProjectHome() {
 
   useEffect(() => {
     if (!loaded) {
-      dispatch(getCommunityProjects()).then(() => {}); // 67a578df-c076-4746-bea8-bc5b884b4a2f
+      dispatch(getCommunityProjects()).then(() => {});
     } else {
       const filtered = projects.filter((project) => project.url === projectURL);
       if (filtered.length > 0) {
@@ -40,8 +46,15 @@ export default function ProjectHome() {
             (project) => project.url === projectURL
           );
           if (filtered.length > 0) {
-            setProject(
-              projects.filter((project) => project.url === projectURL)[0]
+            const localProject = projects.filter(
+              (project) => project.url === projectURL
+            )[0];
+            setProject(localProject);
+            setTalkValue(
+              localProject.talk_markdown === undefined ||
+                localProject.talk_markdown === null
+                ? ""
+                : localProject.talk_markdown
             );
           } else {
             setError404(true);
@@ -55,7 +68,18 @@ export default function ProjectHome() {
     if (projects.length === 0) return;
     const filtered = projects.filter((project) => project.url === projectURL);
     if (filtered.length > 0) {
-      setProject(projects.filter((project) => project.url === projectURL)[0]);
+      // setProject(projects.filter((project) => project.url === projectURL)[0]);
+      const localProject = projects.filter(
+        (project) => project.url === projectURL
+      )[0];
+      setProject(localProject);
+      setTalkValue(
+        localProject.talk_markdown === undefined ||
+          localProject.talk_markdown === null
+          ? ""
+          : localProject.talk_markdown
+      );
+
       setLoading(false);
     } else {
       dispatch(getCommunityProjects()).then(() => {
@@ -63,8 +87,18 @@ export default function ProjectHome() {
           (project) => project.url === projectURL
         );
         if (filtered.length > 0) {
-          setProject(
-            projects.filter((project) => project.url === projectURL)[0]
+          // setProject(
+          //   projects.filter((project) => project.url === projectURL)[0]
+          // );
+          const localProject = projects.filter(
+            (project) => project.url === projectURL
+          )[0];
+          setProject(localProject);
+          setTalkValue(
+            localProject.talk_markdown === undefined ||
+              localProject.talk_markdown === null
+              ? ""
+              : localProject.talk_markdown
           );
         } else {
           setError404(true);
@@ -116,9 +150,14 @@ export default function ProjectHome() {
         <div>
           <Tag>{project.type}</Tag>
         </div>
-        <Text fontSize="5xl" fontFamily="Lato">
-          {project.name}
-        </Text>
+        <Stack direction="row" justify="space-between">
+          <Text fontSize="5xl" fontFamily="Lato">
+            {project.name}
+          </Text>
+          <Button onClick={() => navigate(`public-annotator/annotate`)}>
+            Annotate
+          </Button>
+        </Stack>
         <Tabs variant="enclosed">
           <TabList>
             <Tab>Project</Tab>
@@ -133,17 +172,37 @@ export default function ProjectHome() {
           <TabPanels>
             <TabPanel>
               <ProjectHomeComponent projectURL={projectURL} />
-              {/* <Stack w="100%" padding="10">
-                <ReactMarkdown components={ChakraUIRenderer()} skipHtml>
-                  {project.description}
-                </ReactMarkdown>
-              </Stack> */}
             </TabPanel>
             <TabPanel>
-              {project.talk_markdown.length > 0 ? (
-                <ReactMarkdown components={ChakraUIRenderer()} skipHtml>
-                  {project.talk_markdown}
-                </ReactMarkdown>
+              {editTalk ? (
+                <>
+                  <MDEditor
+                    height={250}
+                    value={talkValue}
+                    onChange={setTalkValue}
+                  />
+                  <Button
+                    margin="10"
+                    onClick={() =>
+                      dispatch(patchProjectTalk([projectURL, talkValue])).then(
+                        () => setEditTalk(false)
+                      )
+                    }
+                  >
+                    Save
+                  </Button>
+                </>
+              ) : talkValue.length > 0 ? (
+                <>
+                  <ReactMarkdown components={ChakraUIRenderer()} skipHtml>
+                    {talkValue}
+                  </ReactMarkdown>
+                  <div>
+                    <Button variant="ghost" onClick={() => setEditTalk(true)}>
+                      Edit
+                    </Button>
+                  </div>
+                </>
               ) : (
                 <>
                   <Stack spacing="5">
@@ -153,7 +212,9 @@ export default function ProjectHome() {
                     </Text>
                     <Text fontFamily="Lato">Would you like to create it?</Text>
                     <div>
-                      <Button variant="ghost">Create</Button>
+                      <Button variant="ghost" onClick={() => setEditTalk(true)}>
+                        Create
+                      </Button>
                     </div>
                   </Stack>
                 </>

@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import MachineTranslationAnnotationComponent from "../../../shared/components/MachineTranslationAnnotationComponent";
+import MachineTranslationFluencyAnnotationComponent from "../../../shared/components/MachineTranslationFluencyAnnotationComponent";
 import { useToast, Box, SkeletonText, Heading, Text } from "@chakra-ui/react";
 import { createPrivateAnnotatorAnnotation } from "../../../features/private-annotator/thunk";
 
-export default function MachineTranslationAnnotation({
+export default function MachineTranslationFluencyAnnotation({
   privateAnnotatorToken,
 }) {
   const [unannotatedId, setUnannotatedId] = useState(null);
   const [dataToBeAnnotated, setDataToBeAnnotated] = useState(null);
+  const [done, setDone] = useState(false);
 
   const toast = useToast();
   const dispatch = useDispatch();
@@ -17,16 +18,18 @@ export default function MachineTranslationAnnotation({
   );
 
   useEffect(() => {
-    if (unannotated.length === 0) return;
+    if (unannotated.length === 0) {
+      setDone(true);
+      return;
+    }
     setUnannotatedId(unannotated[0].id);
     setDataToBeAnnotated({
-      referenceTranslation: unannotated[0].text,
-      MTSystemTranslation: unannotated[0].mt_system_translation,
+      MTSystemTranslation: unannotated[0].text,
     });
   }, [unannotated]);
 
   const submitLogic = (data) => {
-    if (data.fluency === undefined || data.adequacy === undefined) {
+    if (data.fluency === undefined) {
       toast({
         title: "Submission error",
         status: "error",
@@ -51,9 +54,17 @@ export default function MachineTranslationAnnotation({
     });
   };
 
+  if (done) {
+    return (
+      <Text fontSize="3xl" textAlign="center">
+        There are no more texts to be annotated! Good job!
+      </Text>
+    );
+  }
+
   return (
     <>
-      <MachineTranslationAnnotationComponent
+      <MachineTranslationFluencyAnnotationComponent
         translationData={dataToBeAnnotated}
         submit={submitLogic}
       />

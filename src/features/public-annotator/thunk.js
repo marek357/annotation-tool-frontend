@@ -12,6 +12,9 @@ import {
   getProjectDataAPI,
   createCategoryAPI,
   deleteCategoryAPI,
+  patchProjectTalkAPI,
+  createPublicAnnotatorAnnotationAPI,
+  getUnannotatedByPublicAnnotatorDataAPI,
 } from "./api";
 
 export const getCommunityProjects = createAsyncThunk(
@@ -91,6 +94,28 @@ export const uploadUnannotatedFile = createAsyncThunk(
 export const getUnannotatedData = createAsyncThunk(
   "public-annotator/getUnannotatedData",
   async ([projectURL]) => await getUnannotatedDataAPI(projectURL)
+);
+
+export const getUnannotatedByPublicAnnotatorData = createAsyncThunk(
+  "public-annotator/getUnannotatedByPublicAnnotatorData",
+  async ([projectURL]) =>
+    await getUnannotatedByPublicAnnotatorDataAPI(projectURL)
+);
+
+export const createPublicAnnotatorAnnotation = createAsyncThunk(
+  "public-annotator/createPublicAnnotatorAnnotation",
+  async ([projectURL, unannotatedSource, payload]) =>
+    await createPublicAnnotatorAnnotationAPI(
+      projectURL,
+      unannotatedSource,
+      payload
+    )
+);
+
+export const patchProjectTalk = createAsyncThunk(
+  "public-annotator/patchProjectTalk",
+  async ([projectURL, talkValue]) =>
+    await patchProjectTalkAPI(projectURL, talkValue)
 );
 
 export const getProjectData = createAsyncThunk(

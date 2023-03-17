@@ -18,7 +18,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import MachineTranslationAnnotation from "../../components/MachineTranslationAnnotation";
+import MachineTranslationFluencyAnnotation from "../../components/MachineTranslationFluencyAnnotation";
 import TextClassificationAnnotation from "../../components/TextClassificationAnnotation";
 import MachineTranslationAdequacyAnnotation from "../../components/MachineTranslationAdequacyAnnotation";
 
@@ -52,6 +52,10 @@ export default function Annotate() {
     } else if (projectType === "Machine Translation Adequacy") {
       return (
         <MachineTranslationAdequacyAnnotation privateAnnotatorToken={token} />
+      );
+    } else if (projectType === "Machine Translation Fluency") {
+      return (
+        <MachineTranslationFluencyAnnotation privateAnnotatorToken={token} />
       );
     }
   };

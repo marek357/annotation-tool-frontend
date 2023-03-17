@@ -1,17 +1,12 @@
 import {
   Box,
   Button,
-  Center,
   Slider,
   SliderFilledTrack,
   SliderThumb,
   SliderTrack,
   Stack,
   Text,
-  SkeletonText,
-  useHighlight,
-  Highlight,
-  Heading,
   Mark,
   Popover,
   PopoverTrigger,
@@ -19,13 +14,10 @@ import {
   Tooltip,
   RadioGroup,
   Radio,
-  Input,
   Textarea,
 } from "@chakra-ui/react";
 import { useState } from "react";
-// https://www.npmjs.com/package/chakra-ui-steps
-import { Step, Steps, useSteps } from "chakra-ui-steps";
-import Highlightable, { Node } from "highlightable";
+import Highlightable from "highlightable";
 
 // Based on:
 // https://www.cambridge.org/core/journals/natural-language-engineering/article/can-machine-translation-systems-be-evaluated-by-the-crowd-alone/E29DA2BC8E6B99AA1481CC92FAB58462
@@ -37,9 +29,7 @@ export default function MachineTranslationAdequacyAnnotationComponent({
   maxIndex,
   submit,
 }) {
-  const [adequacyComplete, setAdequacyComplete] = useState(false);
   const [adequacy, setAdequacy] = useState(2);
-
   const [highlightsSource, setHighlightsSource] = useState([]);
   const [highlightsTarget, setHighlightsTarget] = useState([]);
   const [targetCategories, setTargetCategories] = useState({});

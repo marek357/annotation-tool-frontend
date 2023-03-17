@@ -29,9 +29,10 @@ export default function TextClassificationAnnotationComponent({
   maxIndex,
   submit,
 }) {
-  const categories = useSelector((state) => state.privateAnnotator.categories);
+  const categories = useSelector((state) => state.publicAnnotator.categories);
   const [category, setCategory] = useState(null);
   const [keyToCategoryMapping, setKeyToCategoryMapping] = useState({});
+
   const toast = useToast();
   // https://usehooks.com/useKeyPress/
   const handleKeyDown = useCallback(
@@ -72,14 +73,13 @@ export default function TextClassificationAnnotationComponent({
     categories.forEach((category) => {
       localKeyToCategoryMapping[category.key_binding] = category.name;
     });
+    if (textClassificationData === null) return;
+    console.log("preannotation", textClassificationData.preAnnotation);
     setKeyToCategoryMapping(localKeyToCategoryMapping);
-    if (
-      textClassificationData.preAnnotation !== undefined &&
-      textClassificationData.preAnnotation in localKeyToCategoryMapping
-    ) {
-      setCategory();
+    if (textClassificationData.preAnnotation !== undefined) {
+      setCategory(textClassificationData.preAnnotation);
     }
-  }, []);
+  }, [textClassificationData]);
 
   const annotationNavigation = () => (
     <>

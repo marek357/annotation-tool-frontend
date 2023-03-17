@@ -89,6 +89,9 @@ export const uploadUnannotatedFileAPI = async (
 export const getUnannotatedDataAPI = async (projectURL) =>
   (await client.get(`/management/projects/${projectURL}/import`)).data;
 
+export const getUnannotatedByPublicAnnotatorDataAPI = async (projectURL) =>
+  (await client.get(`/management/projects/${projectURL}/unannotated`)).data;
+
 export const getProjectDataAPI = async (projectURL) =>
   (await client.get(`/management/projects/${projectURL}`)).data;
 
@@ -115,9 +118,44 @@ export const createCategoryAPI = async (
     )
   ).data;
 
+export const createPublicAnnotatorAnnotationAPI = async (
+  projectURL,
+  unannotatedSource,
+  payload
+) =>
+  (
+    await client.post(`/management/projects/${projectURL}/entries`, {
+      unannotated_source: unannotatedSource,
+      payload: payload,
+    })
+  ).data;
+
+export const getPrivateAnnotatorCategoriesAPI = async (privateAnnotatorToken) =>
+  (
+    await client.get(
+      `/annotate/projects/categories?token=${privateAnnotatorToken}`
+    )
+  ).data;
+
 export const deleteCategoryAPI = async (projectURL, categoryID) =>
   (
     await client.delete(
       `/management/classification/${projectURL}/category?category_id=${categoryID}`
+    )
+  ).data;
+
+export const patchProjectTalkAPI = async (projectURL, talk_markdown) =>
+  (
+    await client.patch(
+      `/management/projects/${projectURL}`,
+      JSON.stringify({
+        talk_markdown: talk_markdown,
+      }),
+      // https://stackoverflow.com/questions/51379356/axios-post-request-not-working
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     )
   ).data;

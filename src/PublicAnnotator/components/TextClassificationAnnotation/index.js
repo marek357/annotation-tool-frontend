@@ -1,32 +1,40 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TextClassificationAnnotationComponent from "../../../shared/components/TextClassificationAnnotationComponent";
-import { useToast, Box, SkeletonText, Text } from "@chakra-ui/react";
+import { useToast, Box, SkeletonText } from "@chakra-ui/react";
 import {
-  createPrivateAnnotatorAnnotation,
-  getPrivateAnnotatorCategories,
-} from "../../../features/private-annotator/thunk";
+  createPublicAnnotatorAnnotation,
+  getUnannotatedByPublicAnnotatorData,
+} from "../../../features/public-annotator/thunk";
+import {
+  getProjectData,
+  getUnannotatedData,
+} from "../../../features/public-annotator/thunk";
 
-export default function TextClassificationAnnotation({
-  privateAnnotatorToken,
-}) {
+export default function TextClassificationAnnotation({ projectURL }) {
   const [loading, setLoading] = useState(true);
   const [unannotatedId, setUnannotatedId] = useState(null);
   const [dataToBeAnnotated, setDataToBeAnnotated] = useState(null);
   const [index, setIndex] = useState(0);
-  const [done, setDone] = useState(false);
 
   const toast = useToast();
   const dispatch = useDispatch();
   const unannotated = useSelector(
-    (state) => state.privateAnnotator.unannotated
+    (state) => state.publicAnnotator.unannotatedByPublicAnnotator
   );
+  const auth = useSelector((state) => state.firebase.auth);
 
   useEffect(() => {
-    dispatch(getPrivateAnnotatorCategories([privateAnnotatorToken])).then(() =>
-      setLoading(false)
+    dispatch(getProjectData([projectURL])).then(() =>
+      dispatch(getUnannotatedData([projectURL])).then(() =>
+        dispatch(() =>
+          dispatch(getUnannotatedByPublicAnnotatorData([projectURL])).then(() =>
+            setLoading(false)
+          )
+        )
+      )
     );
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     // https://stackoverflow.com/questions/64191896/usestate-in-useeffect-does-not-update-state
@@ -39,13 +47,7 @@ export default function TextClassificationAnnotation({
         setDataToBeAnnotated(null);
       }
 
-      if (unannotated.length === 0) {
-        setDone(true);
-        return;
-      }
-      console.log(index);
-      console.log(unannotated);
-      console.log(unannotated[index]);
+      if (unannotated.length === 0) return;
       setUnannotatedId(unannotated[index].id);
       setDataToBeAnnotated({
         text: unannotated[index].text,
@@ -76,11 +78,7 @@ export default function TextClassificationAnnotation({
       return;
     }
     dispatch(
-      createPrivateAnnotatorAnnotation([
-        privateAnnotatorToken,
-        unannotatedId,
-        data,
-      ])
+      createPublicAnnotatorAnnotation([projectURL, unannotatedId, data])
     ).then(() => {
       if (unannotated.length === 0) {
         setIndex(0);
@@ -98,14 +96,6 @@ export default function TextClassificationAnnotation({
 
   if (loading) {
     return <></>;
-  }
-
-  if (done) {
-    return (
-      <Text fontSize="3xl" textAlign="center">
-        There are no more texts to be annotated! Good job!
-      </Text>
-    );
   }
 
   return (
