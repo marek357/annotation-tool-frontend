@@ -15,14 +15,15 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 import ManagePrivateAnnotatorsComponent from "../../../components/ManagePrivateAnnotatorsComponent";
 import PrivateAnnotatorStatisticsComponent from "../../../components/PrivateAnnotatorStatisticsComponent";
 import ProjectHomeComponent from "../../../components/ProjectHomeComponent";
+import AddProjectAdministratorComponent from "../../../components/AddProjectAdministratorComponent";
 import MDEditor from "@uiw/react-md-editor";
 
 export default function ProjectHome() {
   const [loading, setLoading] = useState(true);
-  const [project, setProject] = useState({});
   const [error404, setError404] = useState(false);
   const [editTalk, setEditTalk] = useState(false);
   const [talkValue, setTalkValue] = useState("");
+  const [project, setProject] = useState({});
   const navigate = useNavigate();
   const { projectURL } = useParams();
   const dispatch = useDispatch();
@@ -138,7 +139,8 @@ export default function ProjectHome() {
   }
 
   const userIsAdmin =
-    project.administrators.filter((user) => user === auth.uid).length > 0;
+    project.administrators.filter((user) => user.username === auth.uid).length >
+    0;
 
   return (
     <>
@@ -166,6 +168,7 @@ export default function ProjectHome() {
               <>
                 <Tab>Manage Private Annotators</Tab>
                 <Tab>Private Annotator Statistics</Tab>
+                <Tab>Add Project Administrator</Tab>
               </>
             ) : null}
           </TabList>
@@ -227,7 +230,12 @@ export default function ProjectHome() {
             ) : null}
             {userIsAdmin ? (
               <TabPanel>
-                <PrivateAnnotatorStatisticsComponent />
+                <PrivateAnnotatorStatisticsComponent projectURL={projectURL} />
+              </TabPanel>
+            ) : null}
+            {userIsAdmin ? (
+              <TabPanel>
+                <AddProjectAdministratorComponent projectURL={projectURL} />
               </TabPanel>
             ) : null}
           </TabPanels>

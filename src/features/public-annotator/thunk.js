@@ -15,6 +15,9 @@ import {
   patchProjectTalkAPI,
   createPublicAnnotatorAnnotationAPI,
   getUnannotatedByPublicAnnotatorDataAPI,
+  createAdministratorAPI,
+  deleteProjectEntryAPI,
+  deleteUnannotatedProjectEntryAPI,
 } from "./api";
 
 export const getCommunityProjects = createAsyncThunk(
@@ -121,6 +124,42 @@ export const patchProjectTalk = createAsyncThunk(
 export const getProjectData = createAsyncThunk(
   "public-annotator/getProjectData",
   async ([projectURL]) => await getProjectDataAPI(projectURL)
+);
+
+export const createAdministrator = createAsyncThunk(
+  "public-annotator/createAdministrator",
+  // https://redux-toolkit.js.org/api/createAsyncThunk
+  async ([projectURL, administratorEmail], { rejectWithValue }) => {
+    try {
+      return await createAdministratorAPI(projectURL, administratorEmail);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteProjectEntry = createAsyncThunk(
+  "public-annotator/deleteProjectEntry",
+  // https://redux-toolkit.js.org/api/createAsyncThunk
+  async ([projectURL, entryID], { rejectWithValue }) => {
+    try {
+      return await deleteProjectEntryAPI(projectURL, entryID);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteUnannotatedProjectEntry = createAsyncThunk(
+  "public-annotator/deleteUnannotatedProjectEntry",
+  // https://redux-toolkit.js.org/api/createAsyncThunk
+  async ([projectURL, entryID], { rejectWithValue }) => {
+    try {
+      return await deleteUnannotatedProjectEntryAPI(projectURL, entryID);
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
 );
 
 export const createCategory = createAsyncThunk(

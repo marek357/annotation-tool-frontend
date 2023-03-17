@@ -144,7 +144,7 @@ export default function ProjectHomeComponent({ projectURL }) {
             <AccordionIcon />
           </AccordionButton>
           <AccordionPanel>
-            <ManageUploadedUnannotatedDataComponent />
+            <ManageUploadedUnannotatedDataComponent projectURL={projectURL} />
           </AccordionPanel>
         </AccordionItem>
         {project.type === "Text Classification" ? (

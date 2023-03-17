@@ -41,16 +41,18 @@ export default function ContributorProjects() {
         setProjects(
           communityProjects.filter(
             (project) =>
-              project.administrators.filter((user) => user === auth.uid)
-                .length > 0
+              project.administrators.filter(
+                (user) => user.username === auth.uid
+              ).length > 0
           )
         );
         console.log(
           "updating with",
           communityProjects.filter(
             (project) =>
-              project.administrators.filter((user) => user === auth.uid)
-                .length > 0
+              project.administrators.filter(
+                (user) => user.username === auth.uid
+              ).length > 0
           )
         );
 
@@ -60,16 +62,16 @@ export default function ContributorProjects() {
       setProjects(
         communityProjects.filter(
           (project) =>
-            project.administrators.filter((user) => user === auth.uid).length >
-            0
+            project.administrators.filter((user) => user.username === auth.uid)
+              .length > 0
         )
       );
       console.log(
         "updating with",
         communityProjects.filter(
           (project) =>
-            project.administrators.filter((user) => user === auth.uid).length >
-            0
+            project.administrators.filter((user) => user.username === auth.uid)
+              .length > 0
         )
       );
       setLoading(false);
@@ -80,7 +82,8 @@ export default function ContributorProjects() {
     setProjects(
       communityProjects.filter(
         (project) =>
-          project.administrators.filter((user) => user === auth.uid).length > 0
+          project.administrators.filter((user) => user.username === auth.uid)
+            .length > 0
       )
     );
     setLoading(false);

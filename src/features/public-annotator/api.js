@@ -95,6 +95,20 @@ export const getUnannotatedByPublicAnnotatorDataAPI = async (projectURL) =>
 export const getProjectDataAPI = async (projectURL) =>
   (await client.get(`/management/projects/${projectURL}`)).data;
 
+export const createAdministratorAPI = async (projectURL, administratorEmail) =>
+  (
+    await client.post(
+      `/management/projects/${projectURL}/administrators`,
+      JSON.stringify({ email: administratorEmail }),
+      // https://stackoverflow.com/questions/51379356/axios-post-request-not-working
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  ).data;
+
 export const createCategoryAPI = async (
   projectURL,
   categoryName,
@@ -143,6 +157,14 @@ export const deleteCategoryAPI = async (projectURL, categoryID) =>
       `/management/classification/${projectURL}/category?category_id=${categoryID}`
     )
   ).data;
+
+export const deleteProjectEntryAPI = async (projectURL, entryID) =>
+  (await client.delete(`/management/projects/${projectURL}/entries/${entryID}`))
+    .data;
+
+export const deleteUnannotatedProjectEntryAPI = async (projectURL, entryID) =>
+  (await client.delete(`/management/projects/${projectURL}/import/${entryID}`))
+    .data;
 
 export const patchProjectTalkAPI = async (projectURL, talk_markdown) =>
   (
