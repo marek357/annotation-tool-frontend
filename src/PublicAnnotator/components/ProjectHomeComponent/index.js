@@ -147,7 +147,8 @@ export default function ProjectHomeComponent({ projectURL }) {
             <ManageUploadedUnannotatedDataComponent projectURL={projectURL} />
           </AccordionPanel>
         </AccordionItem>
-        {project.type === "Text Classification" ? (
+        {project.type === "Text Classification" ||
+        project.type === "Named Entity Recognition" ? (
           <AccordionItem>
             <AccordionButton>
               <Box as="span" flex="1" textAlign="left">
@@ -161,7 +162,9 @@ export default function ProjectHomeComponent({ projectURL }) {
               <AccordionIcon />
             </AccordionButton>
             <AccordionPanel>
-              <CategoriesDefinitionComponent />
+              <CategoriesDefinitionComponent
+                showKeyBinding={project.type !== "Named Entity Recognition"}
+              />
             </AccordionPanel>
           </AccordionItem>
         ) : null}

@@ -35,7 +35,7 @@ export default function CreateProject() {
     ["Text Classification", false],
     ["Machine Translation Adequacy", false],
     ["Machine Translation Fluency", false],
-    ["Named Entity Recognition", true],
+    ["Named Entity Recognition", false],
   ];
 
   const submitNewProject = () => {

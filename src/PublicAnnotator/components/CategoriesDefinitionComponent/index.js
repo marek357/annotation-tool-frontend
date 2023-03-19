@@ -25,7 +25,7 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useEffect, useState } from "react";
 
-export default function CategoriesDefinitionComponent() {
+export default function CategoriesDefinitionComponent({ showKeyBinding }) {
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
   const [categoryKeyBinding, setCategoryKeyBinding] = useState("");
@@ -54,7 +54,7 @@ export default function CategoriesDefinitionComponent() {
         duration: 3500,
         isClosable: true,
       });
-    if (categoryKeyBinding === "")
+    if (showKeyBinding && categoryKeyBinding === "")
       toast({
         title: "Missing new category key binding",
         status: "error",
@@ -65,7 +65,7 @@ export default function CategoriesDefinitionComponent() {
     if (
       categoryName === "" ||
       categoryDescription === "" ||
-      categoryKeyBinding === ""
+      (showKeyBinding && categoryKeyBinding === "")
     )
       return;
     dispatch(
@@ -133,16 +133,22 @@ export default function CategoriesDefinitionComponent() {
                 setCategoryDescription(event.target.value);
               }}
             />
-            <Stack direction="row">
-              <Input
-                placeholder="Key binding"
-                isDisabled
-                value={categoryKeyBinding}
-              />
-              <Button onClick={() => setKeyBindingActive(!keyBindingActive)}>
-                {keyBindingActive ? "STOP" : "START"}
-              </Button>
-            </Stack>
+            {showKeyBinding ? (
+              <>
+                <Stack direction="row">
+                  <Input
+                    placeholder="Key binding"
+                    isDisabled
+                    value={categoryKeyBinding}
+                  />
+                  <Button
+                    onClick={() => setKeyBindingActive(!keyBindingActive)}
+                  >
+                    {keyBindingActive ? "STOP" : "START"}
+                  </Button>
+                </Stack>
+              </>
+            ) : null}
             <Button onClick={submitCategoryLogic}>Add category</Button>
           </Stack>
           <Stack w="70%">
@@ -153,57 +159,61 @@ export default function CategoriesDefinitionComponent() {
                   <Tr>
                     <Th>Name</Th>
                     <Th>Description</Th>
-                    <Th>Key Binding</Th>
+                    {showKeyBinding ? <Th>Key Binding</Th> : null}
                     <Th>Action</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {categories.map((category) => (
-                    <Tr>
-                      <Td>{category.name}</Td>
-                      <Td>{category.description}</Td>
-                      <Td>
-                        <Kbd>{category.key_binding}</Kbd>
-                      </Td>
-                      <Td>
-                        <Stack direction="row" spacing={5}>
-                          <Tooltip
-                            label="Delete Category"
-                            aria-label="Delete Category"
-                          >
-                            <IconButton
-                              aria-label="Delete Category"
-                              icon={<CloseIcon />}
-                              onClick={() => {
-                                dispatch(
-                                  deleteCategory([projectURL, category.id])
-                                ).then((response) => {
-                                  if (
-                                    response.type ===
-                                    "public-annotator/deleteCategory/rejected"
-                                  ) {
-                                    toast({
-                                      title: response.payload.detail,
-                                      status: "error",
-                                      duration: 3500,
-                                      isClosable: true,
+                  {categories !== undefined
+                    ? categories.map((category) => (
+                        <Tr>
+                          <Td>{category.name}</Td>
+                          <Td>{category.description}</Td>
+                          {showKeyBinding ? (
+                            <Td>
+                              <Kbd>{category.key_binding}</Kbd>
+                            </Td>
+                          ) : null}
+                          <Td>
+                            <Stack direction="row" spacing={5}>
+                              <Tooltip
+                                label="Delete Category"
+                                aria-label="Delete Category"
+                              >
+                                <IconButton
+                                  aria-label="Delete Category"
+                                  icon={<CloseIcon />}
+                                  onClick={() => {
+                                    dispatch(
+                                      deleteCategory([projectURL, category.id])
+                                    ).then((response) => {
+                                      if (
+                                        response.type ===
+                                        "public-annotator/deleteCategory/rejected"
+                                      ) {
+                                        toast({
+                                          title: response.payload.detail,
+                                          status: "error",
+                                          duration: 3500,
+                                          isClosable: true,
+                                        });
+                                        return;
+                                      }
+                                      toast({
+                                        title: "Category deleted",
+                                        status: "success",
+                                        duration: 3500,
+                                        isClosable: true,
+                                      });
                                     });
-                                    return;
-                                  }
-                                  toast({
-                                    title: "Category deleted",
-                                    status: "success",
-                                    duration: 3500,
-                                    isClosable: true,
-                                  });
-                                });
-                              }}
-                            />
-                          </Tooltip>
-                        </Stack>
-                      </Td>
-                    </Tr>
-                  ))}
+                                  }}
+                                />
+                              </Tooltip>
+                            </Stack>
+                          </Td>
+                        </Tr>
+                      ))
+                    : null}
                 </Tbody>
               </Table>
             </TableContainer>

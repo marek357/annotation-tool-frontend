@@ -42,8 +42,8 @@ export default function ManagePrivateAnnotatorsComponent({ projectURL }) {
   );
 
   const testingURL = "http://localhost:3000";
-  const deploymentURL = "https://annopedia.marekmasiak.tech";
-  const testing = true;
+  const deploymentURL = "https://mt.annopedia.marekmasiak.tech";
+  const testing = false;
 
   const createPrivateAnnotatorLogic = () => {
     if (privateAnnotatorUsername === "")

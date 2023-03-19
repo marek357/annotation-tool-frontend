@@ -84,8 +84,8 @@ export default function PrivateAnnotatorStatisticsComponent({ projectURL }) {
           <Link
             href={
               disagreementType === "all"
-                ? `http://localhost:8000/api/management/projects/${projectURL}/export-disagreements`
-                : `http://localhost:8000/api/management/projects/${projectURL}/export-disagreements?annotator1=${disagreementAnnotator1}&annotator2=${disagreementAnnotator2}`
+                ? `/api/management/projects/${projectURL}/export-disagreements`
+                : `/api/management/projects/${projectURL}/export-disagreements?annotator1=${disagreementAnnotator1}&annotator2=${disagreementAnnotator2}`
             }
           >
             Export

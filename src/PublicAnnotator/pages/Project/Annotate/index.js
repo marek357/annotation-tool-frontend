@@ -17,6 +17,7 @@ import MachineTranslationAdequacyAnnotation from "../../../components/MachineTra
 import NavigationBreadcrumbsComponent from "../../../components/NavigationBreadcrumbsComponent";
 import MachineTranslationFluencyAnnotation from "../../../components/MachineTranslationFluencyAnnotation";
 import TextClassificationAnnotation from "../../../components/TextClassificationAnnotation";
+import NamedEntityRecognitionAnnotation from "../../../components/NamedEntityRecognitionAnnotation";
 import { useNavigate, useParams } from "react-router";
 import { getCommunityProjects } from "../../../../features/public-annotator/thunk";
 
@@ -130,6 +131,8 @@ export default function Annotate() {
       return <MachineTranslationAdequacyAnnotation projectURL={projectURL} />;
     } else if (projectType === "Machine Translation Fluency") {
       return <MachineTranslationFluencyAnnotation projectURL={projectURL} />;
+    } else if (projectType === "Named Entity Recognition") {
+      return <NamedEntityRecognitionAnnotation projectURL={projectURL} />;
     }
     return (
       <Center>

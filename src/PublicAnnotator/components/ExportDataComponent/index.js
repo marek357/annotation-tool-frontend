@@ -129,7 +129,7 @@ export default function ExportDataComponent({ projectURL }) {
         w="lg"
       >
         <LinkOverlay
-          href={`http://localhost:8000/api/management/projects/${projectURL}/export?export_type=json`}
+          href={`/api/management/projects/${projectURL}/export?export_type=json`}
         >
           <CardHeader>
             <Text fontSize="2xl" fontWeight="bold">
@@ -161,7 +161,7 @@ export default function ExportDataComponent({ projectURL }) {
         w="lg"
       >
         <LinkOverlay
-          href={`http://localhost:8000/api/management/projects/${projectURL}/export?export_type=csv`}
+          href={`/api/management/projects/${projectURL}/export?export_type=csv`}
         >
           <CardHeader>
             <Text fontSize="2xl" fontWeight="bold">

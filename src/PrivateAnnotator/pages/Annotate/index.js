@@ -21,6 +21,7 @@ import {
 import MachineTranslationFluencyAnnotation from "../../components/MachineTranslationFluencyAnnotation";
 import TextClassificationAnnotation from "../../components/TextClassificationAnnotation";
 import MachineTranslationAdequacyAnnotation from "../../components/MachineTranslationAdequacyAnnotation";
+import NamedEntityRecognitionAnnotation from "../../components/NamedEntityRecognitionAnnotation";
 
 export default function Annotate() {
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,8 @@ export default function Annotate() {
       return (
         <MachineTranslationFluencyAnnotation privateAnnotatorToken={token} />
       );
+    } else if (projectType === "Named Entity Recognition") {
+      return <NamedEntityRecognitionAnnotation privateAnnotatorToken={token} />;
     }
   };
 
