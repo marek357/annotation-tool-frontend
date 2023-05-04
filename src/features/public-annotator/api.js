@@ -6,7 +6,8 @@ export const getCommunityProjectsAPI = async () =>
 export const createCommunityProjectAPI = async (
   projectName,
   projectDescription,
-  projectType
+  projectType,
+  characterLevelAnnotation
 ) =>
   (
     await client.post(
@@ -16,6 +17,7 @@ export const createCommunityProjectAPI = async (
         description: projectDescription,
         project_type: projectType,
         talk_markdown: "",
+        character_level_selection: characterLevelAnnotation,
       }),
       // https://stackoverflow.com/questions/51379356/axios-post-request-not-working
       {

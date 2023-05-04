@@ -27,11 +27,17 @@ export const getCommunityProjects = createAsyncThunk(
 
 export const createCommunityProject = createAsyncThunk(
   "public-annotator/createCommunityProject",
-  async ([projectName, projectDescription, projectType]) =>
+  async ([
+    projectName,
+    projectDescription,
+    projectType,
+    characterLevelAnnotation,
+  ]) =>
     await createCommunityProjectAPI(
       projectName,
       projectDescription,
-      projectType
+      projectType,
+      characterLevelAnnotation
     )
 );
 

@@ -17,6 +17,10 @@ export default function MachineTranslationFluencyAnnotation({ projectURL }) {
 
   const toast = useToast();
   const dispatch = useDispatch();
+  const characterLevelSelection = useSelector(
+    (state) => state.publicAnnotator.communityProject.character_level_selection
+  );
+
   const unannotated = useSelector(
     (state) => state.publicAnnotator.unannotatedByPublicAnnotator
   );
@@ -84,6 +88,11 @@ export default function MachineTranslationFluencyAnnotation({ projectURL }) {
       <MachineTranslationFluencyAnnotationComponent
         translationData={dataToBeAnnotated}
         submit={submitLogic}
+        characterLevelSelection={
+          characterLevelSelection !== undefined &&
+          characterLevelSelection !== null &&
+          characterLevelSelection === true
+        }
       />
       <Text
         textTransform="uppercase"

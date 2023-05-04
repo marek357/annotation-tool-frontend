@@ -21,6 +21,9 @@ export default function MachineTranslationAdequacyAnnotation({ projectURL }) {
   const unannotated = useSelector(
     (state) => state.publicAnnotator.unannotatedByPublicAnnotator
   );
+  const characterLevelSelection = useSelector(
+    (state) => state.publicAnnotator.communityProject.character_level_selection
+  );
   const auth = useSelector((state) => state.firebase.auth);
 
   useEffect(() => {
@@ -86,6 +89,11 @@ export default function MachineTranslationAdequacyAnnotation({ projectURL }) {
       <MachineTranslationAdequacyAnnotationComponent
         translationData={dataToBeAnnotated}
         submit={submitLogic}
+        characterLevelSelection={
+          characterLevelSelection !== undefined &&
+          characterLevelSelection !== null &&
+          characterLevelSelection === true
+        }
       />
       <Text
         textTransform="uppercase"

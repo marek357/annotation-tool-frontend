@@ -12,6 +12,8 @@ import {
   Button,
   useToast,
   AlertDescription,
+  Radio,
+  RadioGroup,
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "react-redux-firebase";
@@ -31,6 +33,8 @@ export default function CreateProject() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [type, setType] = useState("Text Classification");
+  const [characterLevelAnnotation, setCharacterLevelAnnotation] =
+    useState(null);
   const modesOfAnnotation = [
     ["Text Classification", false],
     ["Machine Translation Adequacy", false],
@@ -60,7 +64,28 @@ export default function CreateProject() {
         duration: 3500,
         isClosable: true,
       });
-    if (name === "" || description === "" || type === "") return;
+    if (
+      (type === "Machine Translation Adequacy" ||
+        type === "Machine Translation Fluency" ||
+        type === "Named Entity Recognition") &&
+      characterLevelAnnotation === null
+    )
+      toast({
+        title: "Character Level vs Word Level selection missing",
+        status: "error",
+        duration: 3500,
+        isClosable: true,
+      });
+    if (
+      name === "" ||
+      description === "" ||
+      type === "" ||
+      ((type === "Machine Translation Adequacy" ||
+        type === "Machine Translation Fluency" ||
+        type === "Named Entity Recognition") &&
+        characterLevelAnnotation === null)
+    )
+      return;
     if (isEmpty(auth)) {
       toast({
         title: "Contributor not authorised",
@@ -70,22 +95,27 @@ export default function CreateProject() {
       });
       return;
     }
-    dispatch(createCommunityProject([name, description, type])).then(
-      (response) => {
-        if (
-          response.type === "public-annotator/createCommunityProject/fulfilled"
-        ) {
-          navigate(`/project/${response.payload.url}`);
-        } else {
-          toast({
-            title: response.error.message,
-            status: "error",
-            duration: 3500,
-            isClosable: true,
-          });
-        }
+    dispatch(
+      createCommunityProject([
+        name,
+        description,
+        type,
+        characterLevelAnnotation,
+      ])
+    ).then((response) => {
+      if (
+        response.type === "public-annotator/createCommunityProject/fulfilled"
+      ) {
+        navigate(`/project/${response.payload.url}`);
+      } else {
+        toast({
+          title: response.error.message,
+          status: "error",
+          duration: 3500,
+          isClosable: true,
+        });
       }
-    );
+    });
   };
 
   return (
@@ -124,6 +154,21 @@ export default function CreateProject() {
               <option disabled={mode[1]}>{mode[0]}</option>
             ))}
           </Select>
+          {type === "Machine Translation Adequacy" ||
+          type === "Machine Translation Fluency" ||
+          type === "Named Entity Recognition" ? (
+            <>
+              <RadioGroup
+                onChange={(event) => setCharacterLevelAnnotation(event)}
+                // defaultValue={characterLevelAnnotation}
+              >
+                <Stack>
+                  <Radio value={"false"}>Word Level Annotation</Radio>
+                  <Radio value={"true"}>Character Level Annotation</Radio>
+                </Stack>
+              </RadioGroup>
+            </>
+          ) : null}
           <Button
             textTransform="capitalize"
             isDisabled={isEmpty(auth)}

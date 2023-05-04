@@ -12,7 +12,7 @@ const buildPrivateAnnotatorClient = (baseURL) => {
 
 const testingURL = "http://localhost:8000/api";
 const deploymentURL = "https://mt.annopedia.marekmasiak.tech/api";
-const testing = true;
+const testing = false;
 
 export const client = buildPrivateAnnotatorClient(
   testing ? testingURL : deploymentURL

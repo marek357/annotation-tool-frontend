@@ -13,14 +13,24 @@ import {
   PopoverContent,
   Tooltip,
   RadioGroup,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
   Radio,
   Textarea,
+  useToast,
+  SliderMark,
+  Modal,
+  ModalContent,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Highlightable from "highlightable";
 
 // Based on:
 // https://www.cambridge.org/core/journals/natural-language-engineering/article/can-machine-translation-systems-be-evaluated-by-the-crowd-alone/E29DA2BC8E6B99AA1481CC92FAB58462
+const errors = ["Grammar", "Spelling", "Typography", "Unintelligeble"];
 export default function MachineTranslationFluencyAnnotationComponent({
   nextText,
   previousText,
@@ -28,13 +38,78 @@ export default function MachineTranslationFluencyAnnotationComponent({
   index,
   maxIndex,
   submit,
+  characterLevelSelection,
 }) {
-  const [fluency, setFluency] = useState(2);
+  const [fluency, setFluency] = useState(50);
   const [highlightsTarget, setHighlightsTarget] = useState([]);
   const [targetCategories, setTargetCategories] = useState({});
   const [comment, setComment] = useState("");
-  const [targetPopoverOpen, setTargetPopoverOpen] = useState(null);
-  console.log("translation data", translationData);
+  const [targetPopoverOpen, setTargetPopoverOpen] = useState("");
+  const [beginningsTarget, setBeginningsTarget] = useState([]);
+  const [endingsTarget, setEndingsTarget] = useState([]);
+
+  const toast = useToast();
+
+  const computeSentenceStatistics = (sentence) => {
+    var beginnings = [];
+    var endings = [];
+    var beginning = 0;
+
+    for (var i = 0; i < sentence.length; i++) {
+      const character = sentence.charAt(i);
+      if (character === " ") {
+        beginnings.push(beginning);
+        endings.push(i - 1);
+        beginning = i + 1;
+      }
+    }
+
+    // edge case for last word in sentence
+    // if the sentence doesn't end with a
+    // space character
+    if (beginning < sentence.length) {
+      beginnings.push(beginning);
+      endings.push(sentence.length - 1);
+    }
+
+    return [beginnings, endings];
+  };
+
+  const findBeginning = (beginnings, sequenceStart) => {
+    if (beginnings.length === 0) return 0;
+    for (var i = beginnings.length - 1; i > 0; i--) {
+      if (sequenceStart === beginnings[i]) return beginnings[i];
+      if (sequenceStart < beginnings[i] && sequenceStart > beginnings[i - 1])
+        return beginnings[i - 1];
+    }
+    return 0;
+  };
+
+  const findEnding = (endings, sequenceEnd) => {
+    if (endings.length === 0) return 0;
+    for (var i = 0; i < endings.length - 1; i++) {
+      if (sequenceEnd === endings[i]) return endings[i];
+      if (sequenceEnd > endings[i] && sequenceEnd < endings[i + 1])
+        return endings[i + 1];
+    }
+    return endings[endings.length - 1];
+  };
+
+  useEffect(() => {
+    if (
+      translationData !== undefined &&
+      translationData !== null &&
+      translationData.MTSystemTranslation !== undefined &&
+      translationData.MTSystemTranslation !== null
+    ) {
+      const sentenceStatisticsTarget = computeSentenceStatistics(
+        translationData.MTSystemTranslation
+      );
+      setBeginningsTarget(sentenceStatisticsTarget[0]);
+      setEndingsTarget(sentenceStatisticsTarget[1]);
+    }
+  }, [translationData]);
+
   if (translationData === null) {
     return (
       <Text fontSize="3xl" textAlign="center">
@@ -64,15 +139,25 @@ export default function MachineTranslationFluencyAnnotationComponent({
               enabled
               style={{ fontFamily: "Lato", fontSize: "1.5em" }}
               onTextHighlighted={(e) => {
+                var start;
+                var end;
+
+                if (!characterLevelSelection) {
+                  start = findBeginning(beginningsTarget, e.start);
+                  end = findEnding(endingsTarget, e.end);
+                } else {
+                  start = e.start;
+                  end = e.end;
+                }
+
                 const modified = highlightsTarget.filter(
-                  (element) =>
-                    element.start !== e.start && element.end !== e.end
+                  (element) => element.start !== start && element.end !== end
                 );
                 console.log(e);
                 if (modified.length === highlightsTarget.length) {
-                  setHighlightsTarget([...highlightsTarget, e]);
-                  targetCategories[[e.start, e.end]] = [
-                    [e.start, e.end],
+                  setHighlightsTarget([...highlightsTarget, { start, end }]);
+                  targetCategories[[start, end]] = [
+                    [start, end],
                     "Unspecified Error",
                   ];
                   setTargetCategories(targetCategories);
@@ -137,6 +222,7 @@ export default function MachineTranslationFluencyAnnotationComponent({
                             const modifiedCategories = targetCategories;
                             delete modifiedCategories[e];
                             setTargetCategories(modifiedCategories);
+                            setTargetPopoverOpen("");
                           }}
                         >
                           {currentRenderedNodes}
@@ -162,9 +248,9 @@ export default function MachineTranslationFluencyAnnotationComponent({
                         }}
                       >
                         <Stack direction="column">
-                          <Radio value="Error 1">Error 1</Radio>
-                          <Radio value="Error 2">Error 2</Radio>
-                          <Radio value="Error 3">Error 3</Radio>
+                          {errors.map((error) => (
+                            <Radio value={error}>{error}</Radio>
+                          ))}
                         </Stack>
                       </RadioGroup>
                     </PopoverContent>
@@ -182,15 +268,66 @@ export default function MachineTranslationFluencyAnnotationComponent({
         <Text fontFamily="Lato">strongly disagree</Text>
         <Slider
           min={0}
-          max={4}
-          defaultValue={2}
+          max={100}
+          defaultValue={50}
           step={1}
-          marginTop={10}
+          // marginTop={10}
           value={fluency}
           onChange={(event) => setFluency(event)}
         >
-          <SliderTrack bg="blue.100" h="5" borderRadius={20}>
-            <SliderFilledTrack bg="blue.100" />
+          <SliderTrack bg="blue.100" h="5">
+            <SliderMark value="0">
+              <Box bgColor="blue.600" width="4px" height="100%">
+                {/* https://chakra-ui.com/docs/components/slider */}
+                <Tooltip
+                  hasArrow
+                  placement="bottom"
+                  isOpen={targetPopoverOpen === ""}
+                  label="Incomprehensible"
+                >
+                  {" | "}
+                </Tooltip>
+              </Box>
+            </SliderMark>
+            <SliderMark value="33">
+              <Box bgColor="blue.600" width="4px" height="100%">
+                {/* https://chakra-ui.com/docs/components/slider */}
+                <Tooltip
+                  hasArrow
+                  placement="bottom"
+                  isOpen={targetPopoverOpen === ""}
+                  label="Poor grammar and disfluent"
+                >
+                  {" | "}
+                </Tooltip>
+              </Box>
+            </SliderMark>
+            <SliderMark value="66">
+              <Box bgColor="blue.600" width="4px" height="100%">
+                {/* https://chakra-ui.com/docs/components/slider */}
+                <Tooltip
+                  hasArrow
+                  placement="bottom"
+                  isOpen={targetPopoverOpen === ""}
+                  label="Grammatically correct, potentially unnatural"
+                >
+                  {" | "}
+                </Tooltip>
+              </Box>
+            </SliderMark>
+            <SliderMark value="100">
+              <Box bgColor="blue.600" width="200px" height="100%">
+                {/* https://chakra-ui.com/docs/components/slider */}
+                <Tooltip
+                  hasArrow
+                  placement="bottom"
+                  isOpen={targetPopoverOpen === ""}
+                  label="Fluent and natural"
+                >
+                  {" | "}
+                </Tooltip>
+              </Box>
+            </SliderMark>
           </SliderTrack>
           <SliderThumb boxSize={8} bg="blue.300" />
         </Slider>
@@ -202,7 +339,7 @@ export default function MachineTranslationFluencyAnnotationComponent({
   return (
     <>
       <Stack w="100%" spacing="10" justify="center" direction="row">
-        <Stack direction="column" justify="center" w="75%">
+        <Stack direction="column" justify="center" w="75%" paddingBottom={10}>
           <div width="100%">{fluencyComponent()}</div>
           <Box padding="10">
             <Textarea
@@ -235,12 +372,27 @@ export default function MachineTranslationFluencyAnnotationComponent({
                       category: element[1],
                     });
                   });
+
+                  if (
+                    target_text_highlights.filter(
+                      (elem) => elem.category === "Unspecified Error"
+                    ).length > 0
+                  ) {
+                    toast({
+                      title: "Please specify all unspecified errors",
+                      status: "error",
+                      duration: 3500,
+                      isClosable: true,
+                    });
+                    return;
+                  }
+
                   submit({
                     fluency: fluency,
                     annotator_comment: comment,
                     target_text_highlights,
                   });
-                  setFluency(2);
+                  setFluency(50);
                   setComment("");
                   setTargetCategories({});
                   setHighlightsTarget([]);
@@ -250,6 +402,89 @@ export default function MachineTranslationFluencyAnnotationComponent({
               </Button>
             </div>
           </Stack>
+          <Accordion allowMultiple allowToggle marginBottom={100}>
+            <AccordionItem>
+              <AccordionButton>
+                <Text fontSize="md" fontFamily="Lato">
+                  DA Guidelines (rules how to choose the right % value)
+                </Text>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+                {" "}
+                <Stack
+                  textAlign="left"
+                  justifyContent="left"
+                  direction="column"
+                  w="100%"
+                >
+                  <Text>
+                    <b>Incomprehensible</b>: The translation is completely
+                    unintelligible and nonsensical. The text is difficult to
+                    understand.
+                  </Text>
+                  <Text>
+                    <b>Poor grammar and disfluent</b>: The translation contains
+                    significant errors in grammar, syntax, and vocabulary that
+                    affects the clarity and naturalness of the text.
+                  </Text>
+                  <Text>
+                    <b>Grammatically correct, potentially unnatural</b>: The
+                    translation is grammatically correct but may have some
+                    errors in spellings, word choice, or syntax. The language
+                    may not be natural.
+                  </Text>
+                  <Text>
+                    <b>Fluent and natural</b>: The translation contains no
+                    grammatical errors, the vocabulary is precise, and the text
+                    is easy to read and understand.
+                  </Text>
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          <Accordion allowMultiple allowToggle marginBottom={100}>
+            <AccordionItem>
+              <AccordionButton>
+                <Text fontSize="md" fontFamily="Lato">
+                  MQM Guidelines (rules how to highlight the source and target
+                  text)
+                </Text>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+                {" "}
+                <Stack
+                  textAlign="left"
+                  justifyContent="left"
+                  direction="column"
+                  w="100%"
+                >
+                  <Text>
+                    <b>Grammar</b>: The highlighted span corresponds to issues
+                    related to the grammar or syntax of the text, other than
+                    spelling and orthography.
+                  </Text>
+                  <Text>
+                    <b>Spelling</b>: The highlighted span corresponds to issues
+                    related to spelling of words.
+                  </Text>
+                  <Text>
+                    <b>Typography</b>: The highlighted span corresponds to
+                    issues related to punctuation and diacritics.
+                  </Text>
+                  <Text>
+                    <b>Unintelligible</b>: The exact nature of the error cannot
+                    be determined. Indicates a major break down in fluency.
+                  </Text>
+                  {/* <Text>
+                    <b>Orthography</b>: The highlighted span corresponds to
+                    issues related to spelling of words.
+                  </Text> */}
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
         </Stack>
       </Stack>
     </>

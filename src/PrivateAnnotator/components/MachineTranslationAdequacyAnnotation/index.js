@@ -16,6 +16,10 @@ export default function MachineTranslationAdequacyAnnotation({
   const unannotated = useSelector(
     (state) => state.privateAnnotator.unannotated
   );
+  const characterLevelSelection = useSelector(
+    (state) =>
+      state.privateAnnotator.privateAnnotator.character_level_annotation
+  );
 
   useEffect(() => {
     if (unannotated.length === 0) {
@@ -68,6 +72,11 @@ export default function MachineTranslationAdequacyAnnotation({
       <MachineTranslationAdequacyAnnotationComponent
         translationData={dataToBeAnnotated}
         submit={submitLogic}
+        characterLevelSelection={
+          characterLevelSelection !== undefined &&
+          characterLevelSelection !== null &&
+          characterLevelSelection === true
+        }
       />
       <Text
         textTransform="uppercase"
