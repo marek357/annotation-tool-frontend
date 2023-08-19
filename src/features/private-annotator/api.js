@@ -41,3 +41,13 @@ export const getPrivateAnnotatorCategoriesAPI = async (privateAnnotatorToken) =>
       `/annotate/projects/categories?token=${privateAnnotatorToken}`
     )
   ).data;
+
+export const deletePrivateAnnotatorProjectEntryAPI = async (
+  privateAnnotatorToken,
+  entryID
+) =>
+  (
+    await client.delete(
+      `/annotate/projects/entry?token=${privateAnnotatorToken}&entry_id=${entryID}`
+    )
+  ).data;

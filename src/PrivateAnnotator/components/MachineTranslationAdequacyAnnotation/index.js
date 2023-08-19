@@ -25,6 +25,8 @@ export default function MachineTranslationAdequacyAnnotation({
     if (unannotated.length === 0) {
       setDone(true);
       return;
+    } else if (unannotated.length !== 0) {
+      setDone(false);
     }
     setUnannotatedId(unannotated[0].id);
     setDataToBeAnnotated({
@@ -60,6 +62,7 @@ export default function MachineTranslationAdequacyAnnotation({
   };
 
   if (done) {
+    console.log("culprit");
     return (
       <Text fontSize="3xl" textAlign="center">
         There are no more texts to be annotated! Good job!

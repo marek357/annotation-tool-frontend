@@ -9,6 +9,7 @@ import {
 } from "../../../features/private-annotator/thunk";
 import {
   Box,
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -122,6 +123,10 @@ export default function Annotate() {
   return (
     <>
       <Navbar token={token} />
+
+      {/* <Stack direction="row" justifyContent="right" paddingRight="10">
+        <Button>Report a bug</Button>
+      </Stack> */}
       {annotationEditor(privateAnnotator.project_type)}
       <Text fontSize="md" fontFamily="Lato" align="center">
         Built for people who care, just like you &#10084;&#65039;

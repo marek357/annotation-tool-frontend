@@ -283,7 +283,8 @@ export default function MachineTranslationAdequacyAnnotationComponent({
     return (
       <Box w="100%">
         <Text fontSize="2xl" fontWeight="bold" textAlign="center">
-          The lower text adequately expresses the meaning of the upper text
+          Does the the lower text adequately expresses the meaning of the upper
+          text?
         </Text>
         <Box border="1px" padding="10">
           <Stack spacing="5">
@@ -292,6 +293,8 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                 fontSize="2xl"
                 fontWeight="bold"
                 fontFamily="Lato"
+                whiteSpace="nowrap"
+                style={{ lineHeight: "300%" }}
                 // https://stackoverflow.com/questions/43184603/select-text-highlight-selection-or-get-selection-value-react
               >
                 <i>Source text:</i>
@@ -299,7 +302,11 @@ export default function MachineTranslationAdequacyAnnotationComponent({
               <Highlightable
                 ranges={highlightsSource}
                 enabled
-                style={{ fontFamily: "Lato", fontSize: "1.5em" }}
+                style={{
+                  fontFamily: "Lato",
+                  fontSize: "1.5em",
+                  lineHeight: "300%",
+                }}
                 onTextHighlighted={(e) => {
                   var start;
                   var end;
@@ -386,6 +393,11 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                             );
                             // https://stackoverflow.com/questions/346021/how-do-i-remove-objects-from-a-javascript-associative-array
                             const modifiedCategoriesTarget = targetCategories;
+                            console.log(
+                              "deleting",
+                              eTarget,
+                              modifiedCategoriesTarget[eTarget]
+                            );
                             delete modifiedCategoriesTarget[eTarget];
                             setTargetCategories(modifiedCategoriesTarget);
                             setTargetPopoverOpen("");
@@ -424,6 +436,8 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                 fontSize="2xl"
                 fontWeight="bold"
                 fontFamily="Lato"
+                whiteSpace="nowrap"
+                style={{ lineHeight: "300%" }}
                 // https://stackoverflow.com/questions/43184603/select-text-highlight-selection-or-get-selection-value-react
               >
                 <i>Target text:</i>
@@ -431,7 +445,11 @@ export default function MachineTranslationAdequacyAnnotationComponent({
               <Highlightable
                 ranges={highlightsTarget}
                 enabled
-                style={{ fontFamily: "Lato", fontSize: "1.5em" }}
+                style={{
+                  fontFamily: "Lato",
+                  fontSize: "1.5em",
+                  lineHeight: "300%",
+                }}
                 onTextHighlighted={(e) => {
                   var start;
                   var end;
@@ -463,7 +481,7 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                     setHighlightsTarget(modified);
                     // https://stackoverflow.com/questions/346021/how-do-i-remove-objects-from-a-javascript-associative-array
                     const modifiedCategories = targetCategories;
-                    delete modifiedCategories[e];
+                    delete modifiedCategories[[e.start, e.end]];
                     setTargetCategories(modifiedCategories);
                   }
                 }}
@@ -582,7 +600,12 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                               );
                               // https://stackoverflow.com/questions/346021/how-do-i-remove-objects-from-a-javascript-associative-array
                               const modifiedCategories = targetCategories;
-                              delete modifiedCategories[e];
+                              console.log(
+                                "modifiyng categories",
+                                e,
+                                modifiedCategories[e]
+                              );
+                              delete modifiedCategories[[e.start, e.end]];
                               setTargetCategories(modifiedCategories);
                               setTargetPopoverOpen("");
                             }}
@@ -771,6 +794,7 @@ export default function MachineTranslationAdequacyAnnotationComponent({
               w="100%"
             />
           </Box>
+          <Text>Selected value {adequacy}</Text>
           {/* </Stack> */}
           <Stack direction="row" justify="center" paddingBottom={10}>
             <div>
@@ -818,6 +842,11 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                     }
                     target_text_highlights.push(temporary);
                   });
+                  console.log(
+                    "presubmit",
+                    target_text_highlights,
+                    targetCategories
+                  );
 
                   if (
                     target_text_highlights.filter(
@@ -832,6 +861,13 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                     });
                     return;
                   }
+
+                  // console.log(
+                  //   "submitting",
+                  //   source_text_highlights,
+                  //   target_text_highlights
+                  // );
+                  // return;
                   submit({
                     adequacy: adequacy,
                     annotator_comment: comment,
@@ -851,43 +887,6 @@ export default function MachineTranslationAdequacyAnnotationComponent({
               </Button>
             </div>
           </Stack>
-          <Accordion allowMultiple allowToggle marginBottom={100}>
-            <AccordionItem>
-              <AccordionButton>
-                <Text fontSize="md" fontFamily="Lato">
-                  DA Guidelines (rules how to choose the right % value)
-                </Text>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel>
-                {" "}
-                <Stack
-                  textAlign="left"
-                  justifyContent="left"
-                  direction="column"
-                  w="100%"
-                >
-                  <Text>
-                    <b>Nonsense/No meaning preserved</b>: Nearly all information
-                    is lost between the translation and source.
-                  </Text>
-                  <Text>
-                    <b>Some meaning preserved</b>: The translation preserves
-                    some of the meaning of the source but misses significant
-                    parts.
-                  </Text>
-                  <Text>
-                    <b>Most meaning preserved</b>: The translation retains most
-                    of the meaning of the source.
-                  </Text>
-                  <Text>
-                    <b>Perfect meaning</b>: The meaning of the translation is
-                    completely consistent with the source.
-                  </Text>
-                </Stack>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
           <Accordion allowMultiple allowToggle marginBottom={100}>
             <AccordionItem>
               <AccordionButton>
@@ -953,6 +952,43 @@ export default function MachineTranslationAdequacyAnnotationComponent({
                       <i>copy</i>
                     </b>{" "}
                     of the highlighted span in the source segment.
+                  </Text>
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          <Accordion allowMultiple allowToggle marginBottom={100}>
+            <AccordionItem>
+              <AccordionButton>
+                <Text fontSize="md" fontFamily="Lato">
+                  DA Guidelines (rules how to choose the right % value)
+                </Text>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+                {" "}
+                <Stack
+                  textAlign="left"
+                  justifyContent="left"
+                  direction="column"
+                  w="100%"
+                >
+                  <Text>
+                    <b>Nonsense/No meaning preserved</b>: Nearly all information
+                    is lost between the translation and source.
+                  </Text>
+                  <Text>
+                    <b>Some meaning preserved</b>: The translation preserves
+                    some of the meaning of the source but misses significant
+                    parts.
+                  </Text>
+                  <Text>
+                    <b>Most meaning preserved</b>: The translation retains most
+                    of the meaning of the source.
+                  </Text>
+                  <Text>
+                    <b>Perfect meaning</b>: The meaning of the translation is
+                    completely consistent with the source.
                   </Text>
                 </Stack>
               </AccordionPanel>

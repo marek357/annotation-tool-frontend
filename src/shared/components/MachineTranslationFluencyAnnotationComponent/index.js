@@ -121,7 +121,7 @@ export default function MachineTranslationFluencyAnnotationComponent({
   const fluencyComponent = () => (
     <Box w="100%">
       <Text fontSize="2xl" fontWeight="bold" textAlign="center">
-        The text is fluent language
+        Is this text fluent?
       </Text>
       <Box border="1px" padding="10">
         <Stack spacing="5">
@@ -130,6 +130,7 @@ export default function MachineTranslationFluencyAnnotationComponent({
               fontSize="2xl"
               fontWeight="bold"
               fontFamily="Lato"
+              style={{ lineHeight: "300%" }}
               // https://stackoverflow.com/questions/43184603/select-text-highlight-selection-or-get-selection-value-react
             >
               <i>Target text:</i>
@@ -137,7 +138,11 @@ export default function MachineTranslationFluencyAnnotationComponent({
             <Highlightable
               ranges={highlightsTarget}
               enabled
-              style={{ fontFamily: "Lato", fontSize: "1.5em" }}
+              style={{
+                fontFamily: "Lato",
+                fontSize: "1.5em",
+                lineHeight: "300%",
+              }}
               onTextHighlighted={(e) => {
                 var start;
                 var end;
@@ -190,6 +195,7 @@ export default function MachineTranslationFluencyAnnotationComponent({
                         hasArrow
                         isOpen
                         placement="bottom"
+                        style={{ opacity: 0.3 }}
                         label={
                           targetCategories[
                             [
@@ -219,8 +225,15 @@ export default function MachineTranslationFluencyAnnotationComponent({
                               )
                             );
                             // https://stackoverflow.com/questions/346021/how-do-i-remove-objects-from-a-javascript-associative-array
+                            console.log(
+                              "beginning to delete",
+                              targetCategories,
+                              "with",
+                              e,
+                              targetCategories[[e.start, e.end]]
+                            );
                             const modifiedCategories = targetCategories;
-                            delete modifiedCategories[e];
+                            delete modifiedCategories[[e.start, e.end]];
                             setTargetCategories(modifiedCategories);
                             setTargetPopoverOpen("");
                           }}
@@ -349,6 +362,8 @@ export default function MachineTranslationFluencyAnnotationComponent({
               w="100%"
             />
           </Box>
+          <Text>Selected value {fluency}</Text>
+
           <Stack direction="row" justify="center" paddingBottom={10}>
             <div>
               <Button
@@ -372,7 +387,6 @@ export default function MachineTranslationFluencyAnnotationComponent({
                       category: element[1],
                     });
                   });
-
                   if (
                     target_text_highlights.filter(
                       (elem) => elem.category === "Unspecified Error"
@@ -384,6 +398,7 @@ export default function MachineTranslationFluencyAnnotationComponent({
                       duration: 3500,
                       isClosable: true,
                     });
+                    console.log("target:", target_text_highlights);
                     return;
                   }
 
@@ -402,47 +417,6 @@ export default function MachineTranslationFluencyAnnotationComponent({
               </Button>
             </div>
           </Stack>
-          <Accordion allowMultiple allowToggle marginBottom={100}>
-            <AccordionItem>
-              <AccordionButton>
-                <Text fontSize="md" fontFamily="Lato">
-                  DA Guidelines (rules how to choose the right % value)
-                </Text>
-                <AccordionIcon />
-              </AccordionButton>
-              <AccordionPanel>
-                {" "}
-                <Stack
-                  textAlign="left"
-                  justifyContent="left"
-                  direction="column"
-                  w="100%"
-                >
-                  <Text>
-                    <b>Incomprehensible</b>: The translation is completely
-                    unintelligible and nonsensical. The text is difficult to
-                    understand.
-                  </Text>
-                  <Text>
-                    <b>Poor grammar and disfluent</b>: The translation contains
-                    significant errors in grammar, syntax, and vocabulary that
-                    affects the clarity and naturalness of the text.
-                  </Text>
-                  <Text>
-                    <b>Grammatically correct, potentially unnatural</b>: The
-                    translation is grammatically correct but may have some
-                    errors in spellings, word choice, or syntax. The language
-                    may not be natural.
-                  </Text>
-                  <Text>
-                    <b>Fluent and natural</b>: The translation contains no
-                    grammatical errors, the vocabulary is precise, and the text
-                    is easy to read and understand.
-                  </Text>
-                </Stack>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
           <Accordion allowMultiple allowToggle marginBottom={100}>
             <AccordionItem>
               <AccordionButton>
@@ -481,6 +455,47 @@ export default function MachineTranslationFluencyAnnotationComponent({
                     <b>Orthography</b>: The highlighted span corresponds to
                     issues related to spelling of words.
                   </Text> */}
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          <Accordion allowMultiple allowToggle marginBottom={100}>
+            <AccordionItem>
+              <AccordionButton>
+                <Text fontSize="md" fontFamily="Lato">
+                  DA Guidelines (rules how to choose the right % value)
+                </Text>
+                <AccordionIcon />
+              </AccordionButton>
+              <AccordionPanel>
+                {" "}
+                <Stack
+                  textAlign="left"
+                  justifyContent="left"
+                  direction="column"
+                  w="100%"
+                >
+                  <Text>
+                    <b>Incomprehensible</b>: The translation is completely
+                    unintelligible and nonsensical. The text is difficult to
+                    understand.
+                  </Text>
+                  <Text>
+                    <b>Poor grammar and disfluent</b>: The translation contains
+                    significant errors in grammar, syntax, and vocabulary that
+                    affects the clarity and naturalness of the text.
+                  </Text>
+                  <Text>
+                    <b>Grammatically correct, potentially unnatural</b>: The
+                    translation is grammatically correct but may have some
+                    errors in spellings, word choice, or syntax. The language
+                    may not be natural.
+                  </Text>
+                  <Text>
+                    <b>Fluent and natural</b>: The translation contains no
+                    grammatical errors, the vocabulary is precise, and the text
+                    is easy to read and understand.
+                  </Text>
                 </Stack>
               </AccordionPanel>
             </AccordionItem>

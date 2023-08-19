@@ -146,12 +146,14 @@ export default function ImportUnannotatedData({ projectURL, projectType }) {
           <FormControl isRequired>
             <FormLabel>
               {projectType === "Machine Translation Adequacy"
-                ? "System Translation Field"
+                ? "Source text"
                 : "Text Field"}
             </FormLabel>
             <Input onChange={(event) => setTextField(event.target.value)} />
             <FormHelperText>
-              Name of column or key in the data file storing text data
+              {projectType === "Machine Translation Adequacy"
+                ? "Text in the original language that was later translated with the MT system"
+                : "Name of column or key in the data file storing text data"}
             </FormHelperText>
           </FormControl>
           {acceptedFiles.length > 0 && acceptedFiles[0].type === "text/csv" ? (
@@ -167,14 +169,14 @@ export default function ImportUnannotatedData({ projectURL, projectType }) {
           ) : null}
           {projectType === "Machine Translation Adequacy" ? (
             <FormControl isRequired>
-              <FormLabel>Reference translation</FormLabel>
+              <FormLabel>Target text</FormLabel>
               <Input
                 onChange={(event) =>
                   setMachineTranslationField(event.target.value)
                 }
               />
               <FormHelperText>
-                Ground truth translation not coming from the evaluated MT system
+                Prediction coming from the MT system
               </FormHelperText>
             </FormControl>
           ) : null}

@@ -6,25 +6,31 @@ import {
   CardHeader,
   Heading,
   Box,
+  IconButton,
   SkeletonText,
+  Tooltip,
   Stack,
   Accordion,
+  useToast,
   AccordionItem,
   AccordionButton,
   Text,
   AccordionIcon,
   AccordionPanel,
 } from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
 
 import { useEffect, useState } from "react";
 import {
   getPrivateAnnotatorAnnotated,
   getPrivateAnnotatorDetails,
   getPrivateAnnotatorUnannotated,
+  deletePrivateAnnotatorProjectEntry,
 } from "../../../features/private-annotator/thunk";
 export default function CompletedAnnotations() {
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
+  const toast = useToast();
   const privateAnnotatorToken = searchParams.get("token");
   const dispatch = useDispatch();
   const annotated = useSelector((state) => state.privateAnnotator.annotated);
@@ -90,6 +96,42 @@ export default function CompletedAnnotations() {
                   {":"}
                   {entryData[valueField]}
                 </Text>
+                <Tooltip
+                  label="Delete Annotation"
+                  aria-label="Delete Annotation"
+                >
+                  <IconButton
+                    aria-label="Delete Annotation"
+                    icon={<CloseIcon />}
+                    onClick={() => {
+                      dispatch(
+                        deletePrivateAnnotatorProjectEntry([
+                          privateAnnotatorToken,
+                          entryData.id,
+                        ])
+                      ).then(() =>
+                        dispatch(
+                          getPrivateAnnotatorUnannotated([
+                            privateAnnotatorToken,
+                          ])
+                        ).then(() =>
+                          dispatch(
+                            getPrivateAnnotatorAnnotated([
+                              privateAnnotatorToken,
+                            ])
+                          ).then(() => {
+                            toast({
+                              title: "Deleted annotation",
+                              status: "info",
+                              duration: 3500,
+                              isClosable: true,
+                            });
+                          })
+                        )
+                      );
+                    }}
+                  />
+                </Tooltip>
               </Stack>
             ))}
           </AccordionPanel>

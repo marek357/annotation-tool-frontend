@@ -5,6 +5,7 @@ import {
   getPrivateAnnotatorAnnotatedAPI,
   createPrivateAnnotatorAnnotationAPI,
   getPrivateAnnotatorCategoriesAPI,
+  deletePrivateAnnotatorProjectEntryAPI,
 } from "./api";
 
 export const getPrivateAnnotatorDetails = createAsyncThunk(
@@ -38,4 +39,19 @@ export const getPrivateAnnotatorCategories = createAsyncThunk(
   "private-annotator/getPrivateAnnotatorCategories",
   async ([privateAnnotatorToken]) =>
     await getPrivateAnnotatorCategoriesAPI(privateAnnotatorToken)
+);
+
+export const deletePrivateAnnotatorProjectEntry = createAsyncThunk(
+  "private-annotator/deletePrivateAnnotatorProjectEntry",
+  // https://redux-toolkit.js.org/api/createAsyncThunk
+  async ([privateAnnotatorToken, entryID], { rejectWithValue }) => {
+    try {
+      return await deletePrivateAnnotatorProjectEntryAPI(
+        privateAnnotatorToken,
+        entryID
+      );
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
 );

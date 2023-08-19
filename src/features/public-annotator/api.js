@@ -91,6 +91,9 @@ export const uploadUnannotatedFileAPI = async (
 export const getUnannotatedDataAPI = async (projectURL) =>
   (await client.get(`/management/projects/${projectURL}/import`)).data;
 
+export const getExportAnootatedDataAPI = async (projectURL) =>
+  await client.get(`/management/projects/${projectURL}/export?export_type=csv`);
+
 export const getUnannotatedByPublicAnnotatorDataAPI = async (projectURL) =>
   (await client.get(`/management/projects/${projectURL}/unannotated`)).data;
 

@@ -39,10 +39,24 @@ export default function MachineTranslationAdequacyAnnotation({ projectURL }) {
   }, [auth]);
 
   useEffect(() => {
+    dispatch(getProjectData([projectURL])).then(() =>
+      dispatch(getUnannotatedData([projectURL])).then(() =>
+        dispatch(() =>
+          dispatch(getUnannotatedByPublicAnnotatorData([projectURL])).then(() =>
+            setLoading(false)
+          )
+        )
+      )
+    );
+  }, []);
+
+  useEffect(() => {
+    console.log("updated bug pursue", unannotated);
     if (unannotated.length === 0) {
       setDone(true);
       return;
     }
+    setDone(false);
     setUnannotatedId(unannotated[0].id);
     setDataToBeAnnotated({
       referenceTranslation: unannotated[0].text,
@@ -77,6 +91,8 @@ export default function MachineTranslationAdequacyAnnotation({ projectURL }) {
   }
 
   if (done) {
+    console.log("CULPRIT 3");
+
     return (
       <Text fontSize="3xl" textAlign="center">
         There are no more texts to be annotated! Good job!

@@ -39,10 +39,24 @@ export default function MachineTranslationFluencyAnnotation({ projectURL }) {
   }, [auth]);
 
   useEffect(() => {
+    dispatch(getProjectData([projectURL])).then(() =>
+      dispatch(getUnannotatedData([projectURL])).then(() =>
+        dispatch(() =>
+          dispatch(getUnannotatedByPublicAnnotatorData([projectURL])).then(() =>
+            setLoading(false)
+          )
+        )
+      )
+    );
+  }, []);
+
+  useEffect(() => {
     if (unannotated.length === 0) {
       setDone(true);
       return;
     }
+    setDone(false);
+
     setUnannotatedId(unannotated[0].id);
     setDataToBeAnnotated({
       MTSystemTranslation: unannotated[0].text,

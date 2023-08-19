@@ -19,6 +19,8 @@ import {
   TagRightIcon,
   TagCloseButton,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
+
 import { useNavigate } from "react-router";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import rehypeHighlight from "rehype-highlight";
@@ -77,7 +79,19 @@ export default function BrowseProjects() {
               </ReactMarkdown>
             </Box>
             <Box h="15%">
-              <Button
+              <Link
+                fontSize="sm"
+                colorScheme="teal"
+                variant="ghost"
+                textTransform="uppercase"
+                // https://stackoverflow.com/questions/30202755/react-router-open-link-in-new-tab
+                to={`/project/${project.url}`}
+                rel="noopener noreferrer"
+              >
+                Jump in!
+              </Link>
+
+              {/* <Button
                 fontSize="sm"
                 colorScheme="teal"
                 variant="ghost"
@@ -85,7 +99,7 @@ export default function BrowseProjects() {
                 onClick={() => navigate(`/project/${project.url}`)}
               >
                 Contribute
-              </Button>
+              </Button> */}
             </Box>
           </Stack>
         </CardBody>

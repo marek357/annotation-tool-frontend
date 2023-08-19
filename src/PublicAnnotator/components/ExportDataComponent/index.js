@@ -11,9 +11,15 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { getExportAnootatedDataAPI } from "../../../features/public-annotator/api";
+// https://stackoverflow.com/questions/41938718/how-to-download-files-using-axios
+const FileDownload = require("js-file-download");
 
 export default function ExportDataComponent({ projectURL }) {
   const entries = useSelector((state) => state.publicAnnotator.annotated);
+  const projectName = useSelector(
+    (state) => state.publicAnnotator.communityProject.name
+  );
   const { colorMode, toggleColorMode } = useColorMode();
 
   const jsonPreview = () => (
@@ -161,7 +167,15 @@ export default function ExportDataComponent({ projectURL }) {
         w="lg"
       >
         <LinkOverlay
-          href={`/api/management/projects/${projectURL}/export?export_type=csv`}
+          // href={`/api/management/projects/${projectURL}/export?export_type=csv`}
+          href="#"
+          onClick={() => {
+            // https://stackoverflow.com/questions/41938718/how-to-download-files-using-axios
+            getExportAnootatedDataAPI(projectURL).then((response) => {
+              // FileDownload(response.data, `${projectName}.csv`);
+              FileDownload(`\uFEFF${response.data}`, `exportData.csv`);
+            });
+          }}
         >
           <CardHeader>
             <Text fontSize="2xl" fontWeight="bold">

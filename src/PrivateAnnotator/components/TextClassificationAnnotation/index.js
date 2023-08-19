@@ -43,6 +43,8 @@ export default function TextClassificationAnnotation({
         setDone(true);
         return;
       }
+      setDone(false);
+
       console.log(index);
       console.log(unannotated);
       console.log(unannotated[index]);

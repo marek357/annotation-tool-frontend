@@ -1,5 +1,16 @@
 import { CloseIcon } from "@chakra-ui/icons";
-import { IconButton, Tooltip } from "@chakra-ui/react";
+import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
+  IconButton,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +22,7 @@ import {
 
 export default function ManageUploadedUnannotatedDataComponent({ projectURL }) {
   const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const type = useSelector(
     (state) => state.publicAnnotator.communityProject.type
   );
@@ -66,8 +78,45 @@ export default function ManageUploadedUnannotatedDataComponent({ projectURL }) {
       dispatch(getUnannotatedData([projectURL]));
     }
   }, [projectURL]);
+
   return (
     <>
+      {data !== undefined && data !== null && data.length > 0 ? (
+        <Button onClick={onOpen}>Delete All</Button>
+      ) : null}
+      {/* https://chakra-ui.com/docs/components/alert-dialog */}
+      <AlertDialog isOpen={isOpen} onClose={onClose}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader>Delete all uploaded entries</AlertDialogHeader>
+            <AlertDialogBody>
+              This is not reversible, once the operation is performed, the data
+              will not be retrievable
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button onClick={onClose} marginRight={5}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => {
+                  data.forEach((unannotatedEntry) => {
+                    dispatch(
+                      deleteUnannotatedProjectEntry([
+                        projectURL,
+                        unannotatedEntry.id,
+                      ])
+                    ).then(() => dispatch(getUnannotatedData([projectURL])));
+                  });
+                  onClose();
+                }}
+                colorScheme="red"
+              >
+                Delete All
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
       <DataTable columns={columns(type)} data={data} />
     </>
   );

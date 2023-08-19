@@ -46,6 +46,7 @@ export default function NamedEntityRecognitionAnnotation({
         setDone(true);
         return;
       }
+      setDone(false);
       console.log(index);
       console.log(unannotated);
       console.log(unannotated[index]);
@@ -93,6 +94,7 @@ export default function NamedEntityRecognitionAnnotation({
   }
 
   if (done) {
+    console.log("CULPRIT 2");
     return (
       <Text fontSize="3xl" textAlign="center">
         There are no more texts to be annotated! Good job!

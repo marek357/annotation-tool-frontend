@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import { Link } from "react-router-dom";
 
 export default function ContributorProjects() {
   const dispatch = useDispatch();
@@ -127,15 +128,17 @@ export default function ContributorProjects() {
               </ReactMarkdown>
             </Box>
             <Box h="15%">
-              <Button
+              <Link
                 fontSize="sm"
                 colorScheme="teal"
                 variant="ghost"
                 textTransform="uppercase"
-                onClick={() => navigate(`/project/${project.url}`)}
+                // https://stackoverflow.com/questions/30202755/react-router-open-link-in-new-tab
+                to={`/project/${project.url}`}
+                rel="noopener noreferrer"
               >
                 Jump in!
-              </Button>
+              </Link>
             </Box>
           </Stack>
         </CardBody>
